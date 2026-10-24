@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Academic Project Documentation & Architecture
+    url: https://github.com/
+    about: Read system architecture, database schema, and concurrency controls in docs/ARCHITECTURE.md.
