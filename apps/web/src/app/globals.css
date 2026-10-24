@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 206 58% 38%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased font-sans selection:bg-blue-600 selection:text-white min-h-screen flex flex-col;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  .glass-card-dark {
+    background: rgba(15, 34, 51, 0.92);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, #0f2233 0%, #1e4569 50%, #2b669b 100%);
+  }
+
+  .mesh-gradient {
+    background-color: #0f2233;
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(210,100%,25%,0.8) 0, transparent 50%), 
+      radial-gradient(at 100% 100%, hsla(160,80%,30%,0.4) 0, transparent 50%),
+      radial-gradient(at 50% 50%, hsla(220,60%,15%,0.7) 0, transparent 60%);
+  }
+}
