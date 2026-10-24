@@ -24,8 +24,8 @@ We utilize **Turborepo** with npm workspaces:
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/RDBMS.git
-cd RDBMS
+git clone https://github.com/cyber-anshuman/College-Admission-portal.git
+cd College-Admission-portal
 
 # Install dependencies across all workspaces
 npm install

@@ -3,7 +3,7 @@
 # 🎓 College Admission Management System
 ### Relational Database Management System (RDBMS) & Full-Stack Web Platform
 
-[![CI Pipeline](https://github.com/itz-Ansh/RDBMS/actions/workflows/ci.yml/badge.svg)](https://github.com/itz-Ansh/RDBMS/actions/workflows/ci.yml)
+[![CI Pipeline](https://github.com/cyber-anshuman/College-Admission-portal/actions/workflows/ci.yml/badge.svg)](https://github.com/cyber-anshuman/College-Admission-portal/actions/workflows/ci.yml)
 [![Node Version](https://img.shields.io/badge/Node.js-v20%2B%20%7C%20v24%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2%20App%20Router-black?logo=next.js&logoColor=white)](https://nextjs.org/)
@@ -33,7 +33,7 @@
 | **Project Topic** | **College Admission Management System** |
 | **Course / Subject** | **Relational Database Management Systems (RDBMS)** / Advanced Software Engineering |
 | **Curriculum Context** | Capstone Database & Full-Stack System Design Project |
-| **Author / Student** | [itz_Ansh](https://github.com/itz-Ansh) |
+| **Author / Student** | [cyber-anshuman](https://github.com/cyber-anshuman) |
 | **Project Objective** | Eliminate paper applications, spreadsheets, and manual errors with an ACID-compliant, auditable, multi-actor relational database platform. |
 | **Architectural Model** | Clean Architecture, Modular Monolith (NestJS), Monorepo (Turborepo), Next.js App Router |
 
