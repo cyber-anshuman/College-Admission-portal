@@ -13,10 +13,6 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "paths": {
-      "@admission/shared": ["../../packages/shared/src/index.ts"],
-      "@admission/shared/*": ["../../packages/shared/src/*"]
-    },
     "incremental": true,
     "allowJs": true,
     "skipLibCheck": true,
@@ -26,5 +22,5 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*"]
 }
