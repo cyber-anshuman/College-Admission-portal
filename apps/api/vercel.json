@@ -1,18 +1,4 @@
 {
-  "version": 2,
-  "installCommand": "cd ../.. && npm install",
   "buildCommand": "cd ../.. && npx turbo run build --filter=@admission/shared && npx prisma generate --schema=packages/database/prisma/schema.prisma && npx turbo run build --filter=@admission/api",
-  "builds": [
-    {
-      "src": "src/main.ts",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/main.ts",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
-    }
-  ]
+  "installCommand": "cd ../.. && npm install"
 }

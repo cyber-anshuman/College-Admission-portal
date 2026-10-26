@@ -167,7 +167,7 @@ async function bootstrap() {
   }
 }
 
-if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test') {
   bootstrap();
 }
 
