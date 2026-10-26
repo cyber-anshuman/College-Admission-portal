@@ -134,11 +134,18 @@ export async function apiRequest<T = any>(
   const responseJson = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    const errorMsg =
-      responseJson.message ||
-      (Array.isArray(responseJson.message)
-        ? responseJson.message.join(', ')
-        : 'Request failed');
+    let errorMsg = 'Request failed';
+    if (Array.isArray(responseJson.message)) {
+      errorMsg = responseJson.message.join(', ');
+    } else if (typeof responseJson.message === 'string' && responseJson.message.trim()) {
+      errorMsg = responseJson.message;
+    } else if (typeof responseJson.error === 'string' && responseJson.error.trim()) {
+      errorMsg = responseJson.error;
+    } else if (res.statusText) {
+      errorMsg = `${res.statusText} (${res.status})`;
+    } else {
+      errorMsg = `Request failed with status ${res.status}`;
+    }
     throw new Error(errorMsg);
   }
 
