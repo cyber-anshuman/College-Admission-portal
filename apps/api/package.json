@@ -4,6 +4,7 @@
   "description": "NestJS Modular Monolith API for College Admission Management System",
   "private": true,
   "scripts": {
+    "prebuild": "cd ../.. && npx turbo run build --filter=@admission/shared && npx prisma generate --schema=packages/database/prisma/schema.prisma",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
