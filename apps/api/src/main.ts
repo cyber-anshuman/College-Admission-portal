@@ -11,7 +11,7 @@ export function validateConfig() {
   const jwtSecret = process.env.JWT_SECRET;
   const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET;
   const nodeEnv = process.env.NODE_ENV;
-  const trustProxy = process.env.TRUST_PROXY;
+  let trustProxy = process.env.TRUST_PROXY;
 
   const PLACEHOLDER_JWT = 'super_secret_admission_jwt_key_2026_change_in_production';
   const PLACEHOLDER_REFRESH = 'super_secret_admission_refresh_key_2026_change_in_production';
@@ -37,7 +37,12 @@ export function validateConfig() {
       throw new Error('FATAL: Cannot use .env.example placeholder secrets in production environment.');
     }
     if (!trustProxy) {
-      throw new Error('FATAL: TRUST_PROXY environment variable is required in production.');
+      if (process.env.VERCEL) {
+        process.env.TRUST_PROXY = '1';
+        trustProxy = '1';
+      } else {
+        throw new Error('FATAL: TRUST_PROXY environment variable is required in production.');
+      }
     }
   }
 
@@ -78,7 +83,23 @@ export async function createNestApp(expressInstance?: Express): Promise<INestApp
 
   // Global prefix
   const apiPrefix = process.env.API_PREFIX || 'api';
-  app.setGlobalPrefix(apiPrefix);
+  app.setGlobalPrefix(apiPrefix, { exclude: ['/'] });
+
+  const httpAdapter = app.getHttpAdapter();
+  if (httpAdapter && typeof (httpAdapter.getInstance() as any)?.get === 'function') {
+    (httpAdapter.getInstance() as any).get('/', (_req: any, res: any) => {
+      res.json({
+        name: 'Apex Institute Admissions Management API',
+        status: 'online',
+        timestamp: new Date().toISOString(),
+        endpoints: {
+          health: `/${apiPrefix}/health/live`,
+          readiness: `/${apiPrefix}/health/ready`,
+          docs: `/${apiPrefix}/docs`,
+        },
+      });
+    });
+  }
 
   // Helmet with selective Swagger CSP relaxation
   const isProduction = process.env.NODE_ENV === 'production';
@@ -141,13 +162,24 @@ let cachedServer: Express | null = null;
 
 // Vercel Serverless Function entrypoint
 export default async function handler(req: any, res: any) {
-  if (!cachedServer) {
-    const expressApp = express();
-    const app = await createNestApp(expressApp);
-    await app.init();
-    cachedServer = expressApp;
+  try {
+    if (!cachedServer) {
+      const expressApp = express();
+      const app = await createNestApp(expressApp);
+      await app.init();
+      cachedServer = expressApp;
+    }
+    return (cachedServer as any)(req, res);
+  } catch (err: any) {
+    console.error('SERVERLESS HANDLER INITIALIZATION ERROR:', err);
+    if (!res.headersSent) {
+      res.status(500).json({
+        statusCode: 500,
+        error: 'SERVERLESS_INITIALIZATION_ERROR',
+        message: err.message || String(err),
+      });
+    }
   }
-  return (cachedServer as any)(req, res);
 }
 
 // Standalone server bootstrap for local development
@@ -167,7 +199,8 @@ async function bootstrap() {
   }
 }
 
-if (process.env.NODE_ENV !== 'test') {
+// Only invoke standalone bootstrap when NOT running on Vercel Serverless and NOT in unit tests
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   bootstrap();
 }
 
