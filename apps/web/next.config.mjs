@@ -1,7 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
-    const internalApiUrl = process.env.INTERNAL_API_URL || 'http://localhost:4000';
+    const isProd = process.env.NODE_ENV === 'production';
+    const internalApiUrl = process.env.INTERNAL_API_URL || (!isProd ? 'http://localhost:4000' : null);
+
+    if (!internalApiUrl) {
+      return [];
+    }
+
     return [
       {
         source: '/api/:path*',

@@ -6,7 +6,8 @@
       "framework": "nextjs"
     },
     "api": {
-      "root": "apps/api"
+      "root": "apps/api",
+      "entrypoint": "dist/src/main.js"
     }
   },
   "rewrites": [
