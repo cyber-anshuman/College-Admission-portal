@@ -1,7 +1,7 @@
 {
   "version": 2,
   "installCommand": "cd ../.. && npm install",
-  "buildCommand": "cd ../.. && npx turbo run build --filter=@admission/api",
+  "buildCommand": "cd ../.. && npx prisma generate --schema=packages/database/prisma/schema.prisma && npx turbo run build --filter=@admission/api",
   "builds": [
     {
       "src": "src/main.ts",
