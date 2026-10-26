@@ -12,7 +12,7 @@ import {
   X,
   LayoutDashboard,
 } from 'lucide-react';
-import { getStoredUser, clearStoredToken } from '../lib/api';
+import { api } from '../lib/api';
 
 export default function Navbar() {
   const router = useRouter();
@@ -20,11 +20,19 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    setUser(getStoredUser());
+    api.getMe()
+      .then((res) => {
+        if (res.data) setUser(res.data);
+      })
+      .catch(() => {
+        setUser(null);
+      });
   }, []);
 
-  const handleLogout = () => {
-    clearStoredToken();
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } catch {}
     setUser(null);
     router.push('/login');
   };

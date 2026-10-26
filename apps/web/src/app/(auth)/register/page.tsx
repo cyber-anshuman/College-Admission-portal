@@ -14,7 +14,7 @@ import {
   CheckCircle2,
   FileCheck,
 } from 'lucide-react';
-import { api, setStoredToken, setStoredUser } from '../../../lib/api';
+import { api, setStoredToken } from '../../../lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -50,8 +50,13 @@ export default function RegisterPage() {
       return;
     }
 
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long');
+    if (formData.password.length < 10) {
+      setError('Password must be at least 10 characters long');
+      return;
+    }
+
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      setError('Password must contain at least one uppercase letter, one lowercase letter, and one number');
       return;
     }
 
@@ -74,11 +79,6 @@ export default function RegisterPage() {
       });
 
       setStoredToken(response.tokens.accessToken);
-      setStoredUser({
-        ...response.user,
-        applicantProfile: response.applicantProfile,
-      });
-
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Registration failed. Please check your information.');
@@ -209,7 +209,7 @@ export default function RegisterPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Password (min. 8 characters) *
+                  Password (min. 10 chars with uppercase, lowercase & number) *
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />

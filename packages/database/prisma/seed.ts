@@ -1,9 +1,22 @@
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load .env from root monorepo or current directory
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config();
+
 import { PrismaClient, Role, QuotaCategory, DegreeLevel, AuditAction } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('ERROR: Database seeding is forbidden in production environments.');
+    process.exit(1);
+  }
+
   console.log('🌱 Starting database seed for College Admission Management System...');
 
   const defaultPassword = await bcrypt.hash('Password@123', 10);

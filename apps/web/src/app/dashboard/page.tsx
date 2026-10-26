@@ -20,33 +20,46 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import {
-  getStoredUser,
   clearStoredToken,
   api,
-  setStoredUser,
   setStoredToken,
+  bootstrapSession,
 } from '../../lib/api';
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
 
   useEffect(() => {
-    const stored = getStoredUser();
-    if (!stored) {
-      router.push('/login');
-      return;
-    }
-    setUser(stored);
-    setLoading(false);
+    let mounted = true;
+    bootstrapSession()
+      .then((userData) => {
+        if (!mounted) return;
+        if (!userData) {
+          router.push('/login');
+          return;
+        }
+        setUser(userData);
+        setLoading(false);
 
-    // If auditor or admin, fetch audit logs
-    if (stored.role === 'AUDITOR' || stored.role === 'ADMIN') {
-      fetchAuditLogs();
-    }
+        // If auditor or admin, fetch audit logs
+        if (userData.role === 'AUDITOR' || userData.role === 'ADMIN') {
+          fetchAuditLogs();
+        }
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err.message || 'Service temporarily unavailable. Retrying...');
+        setLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, [router]);
 
   const fetchAuditLogs = async () => {
@@ -63,20 +76,20 @@ export default function DashboardPage() {
     }
   };
 
-  const handleLogout = () => {
-    clearStoredToken();
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } finally {
+      clearStoredToken();
+      router.push('/login');
+    }
   };
 
-  // Quick switcher to test other roles from within dashboard
+  // Quick switcher to test other roles from within dashboard (tree-shaken in production)
   const switchRole = async (targetEmail: string, pass: string) => {
     try {
       const resp = await api.login({ email: targetEmail, password: pass });
       setStoredToken(resp.tokens.accessToken);
-      setStoredUser({
-        ...resp.user,
-        applicantProfile: resp.applicantProfile,
-      });
       setUser({
         ...resp.user,
         applicantProfile: resp.applicantProfile,
@@ -97,7 +110,26 @@ export default function DashboardPage() {
     );
   }
 
-  if (!user) return null;
+  if (!user) {
+    if (error) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4">
+          <div className="max-w-md w-full p-6 bg-white rounded-2xl border border-amber-200 shadow-sm text-center">
+            <AlertCircle className="w-8 h-8 text-amber-500 mx-auto mb-2" />
+            <h2 className="text-base font-bold text-slate-900 mb-1">Service Temporarily Unavailable</h2>
+            <p className="text-xs text-slate-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-institutional-700 text-white text-xs font-bold rounded-lg hover:bg-institutional-800"
+            >
+              Retry Connection
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
 
   return (
     <div className="bg-slate-50 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
@@ -144,40 +176,42 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Quick Role Simulator bar for pair programming & audit */}
-        <div className="bg-slate-900 text-slate-300 rounded-xl p-3 px-4 flex flex-wrap items-center justify-between text-xs gap-3">
-          <div className="flex items-center gap-2 font-semibold text-white">
-            <Settings className="w-3.5 h-3.5 text-amber-400" />
-            <span>Switch Role Simulation:</span>
+        {/* Quick Role Simulator bar for pair programming & audit (stripped in production) */}
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="bg-slate-900 text-slate-300 rounded-xl p-3 px-4 flex flex-wrap items-center justify-between text-xs gap-3">
+            <div className="flex items-center gap-2 font-semibold text-white">
+              <Settings className="w-3.5 h-3.5 text-amber-400" />
+              <span>Switch Role Simulation:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: 'Admin', email: 'admin@college.edu', role: 'ADMIN' },
+                { label: 'Admission Officer', email: 'officer@college.edu', role: 'ADMISSION_OFFICER' },
+                { label: 'Reviewer (HOD)', email: 'hod.cse@college.edu', role: 'REVIEWER_HOD' },
+                { label: 'Accounts', email: 'accounts@college.edu', role: 'ACCOUNTS' },
+                { label: 'Auditor', email: 'auditor@college.edu', role: 'AUDITOR' },
+                { label: 'Applicant (Rahul)', email: 'applicant.rahul@example.com', role: 'APPLICANT' },
+              ].map((r) => (
+                <button
+                  key={r.email}
+                  onClick={() =>
+                    switchRole(
+                      r.email,
+                      r.role === 'APPLICANT' ? 'Applicant@123' : 'Password@123',
+                    )
+                  }
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
+                    user.role === r.role && user.email === r.email
+                      ? 'bg-institutional-500 text-white shadow-sm'
+                      : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {[
-              { label: 'Admin', email: 'admin@college.edu', role: 'ADMIN' },
-              { label: 'Admission Officer', email: 'officer@college.edu', role: 'ADMISSION_OFFICER' },
-              { label: 'Reviewer (HOD)', email: 'hod.cse@college.edu', role: 'REVIEWER_HOD' },
-              { label: 'Accounts', email: 'accounts@college.edu', role: 'ACCOUNTS' },
-              { label: 'Auditor', email: 'auditor@college.edu', role: 'AUDITOR' },
-              { label: 'Applicant (Rahul)', email: 'applicant.rahul@example.com', role: 'APPLICANT' },
-            ].map((r) => (
-              <button
-                key={r.email}
-                onClick={() =>
-                  switchRole(
-                    r.email,
-                    r.role === 'APPLICANT' ? 'Applicant@123' : 'Password@123',
-                  )
-                }
-                className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all ${
-                  user.role === r.role && user.email === r.email
-                    ? 'bg-institutional-500 text-white shadow-sm'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white'
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* ROLE VIEW: APPLICANT */}
         {user.role === 'APPLICANT' && (

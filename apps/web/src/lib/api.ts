@@ -1,5 +1,4 @@
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL = '/api';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -8,44 +7,89 @@ export interface ApiResponse<T = any> {
   timestamp: string;
 }
 
-export function getStoredToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem('admission_access_token');
+// In-memory access token storage (never persisted to localStorage)
+let inMemoryAccessToken: string | null = null;
+
+// Purge any legacy tokens or profile PII from localStorage
+if (typeof window !== 'undefined') {
+  try {
+    localStorage.removeItem('admission_access_token');
+    localStorage.removeItem('admission_user');
+  } catch {}
 }
 
-export function setStoredToken(token: string): void {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('admission_access_token', token);
-  }
+export function getStoredToken(): string | null {
+  return inMemoryAccessToken;
+}
+
+export function setStoredToken(token: string | null): void {
+  inMemoryAccessToken = token;
 }
 
 export function clearStoredToken(): void {
+  inMemoryAccessToken = null;
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('admission_access_token');
-    localStorage.removeItem('admission_user');
+    try {
+      localStorage.removeItem('admission_access_token');
+      localStorage.removeItem('admission_user');
+    } catch {}
   }
 }
 
-export function getStoredUser(): any | null {
-  if (typeof window === 'undefined') return null;
-  const raw = localStorage.getItem('admission_user');
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
+let refreshPromise: Promise<string | null> | null = null;
 
-export function setStoredUser(user: any): void {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('admission_user', JSON.stringify(user));
+export async function bootstrapSession(): Promise<any | null> {
+  if (refreshPromise) {
+    const token = await refreshPromise;
+    if (!token) return null;
+    return api.getMe().catch(() => null);
   }
+
+  refreshPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+
+      if (res.status === 401) {
+        clearStoredToken();
+        return null;
+      }
+
+      if (!res.ok) {
+        // Transient 503 or server error - keep state, do not redirect
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.message || `Service temporarily unavailable (${res.status})`);
+      }
+
+      const json = await res.json();
+      const token = json.data?.accessToken || json.accessToken;
+      if (token) {
+        setStoredToken(token);
+        return token;
+      }
+      return null;
+    } catch (err: any) {
+      if (err.message && err.message.includes('unavailable')) {
+        throw err;
+      }
+      return null;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  const token = await refreshPromise;
+  if (!token) return null;
+  return api.getMe().catch(() => null);
 }
 
 export async function apiRequest<T = any>(
   endpoint: string,
   options: RequestInit = {},
+  isRetry = false,
 ): Promise<T> {
   const token = getStoredToken();
   const headers: Record<string, string> = {
@@ -63,7 +107,29 @@ export async function apiRequest<T = any>(
   const res = await fetch(url, {
     ...options,
     headers,
+    credentials: 'include',
   });
+
+  // Handle 401 with silent token refresh
+  if (
+    res.status === 401 &&
+    !isRetry &&
+    !endpoint.includes('/auth/login') &&
+    !endpoint.includes('/auth/refresh')
+  ) {
+    try {
+      const user = await bootstrapSession();
+      if (user && getStoredToken()) {
+        return apiRequest<T>(endpoint, options, true);
+      } else {
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login';
+        }
+      }
+    } catch {
+      // If refresh threw a 503 / network error, let it propagate without redirecting
+    }
+  }
 
   const responseJson = await res.json().catch(() => ({}));
 
@@ -81,6 +147,7 @@ export async function apiRequest<T = any>(
 
 export const api = {
   // Auth
+  getConfig: () => apiRequest<{ otpEnabled: boolean }>('/auth/config'),
   login: (data: { email: string; password: string }) =>
     apiRequest('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
   register: (data: any) =>
@@ -89,7 +156,10 @@ export const api = {
     apiRequest('/auth/otp/send', { method: 'POST', body: JSON.stringify(data) }),
   verifyOtp: (data: { identifier: string; otp: string }) =>
     apiRequest('/auth/otp/verify', { method: 'POST', body: JSON.stringify(data) }),
+  refresh: () => apiRequest('/auth/refresh', { method: 'POST' }),
+  logout: () => apiRequest('/auth/logout', { method: 'POST' }),
   getMe: () => apiRequest('/auth/me'),
+  bootstrapSession,
 
   // Programs & Seats
   getPrograms: (activeOnly = true) =>

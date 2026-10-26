@@ -63,7 +63,7 @@ export default function Footer() {
             <div className="space-y-2 text-xs text-slate-400">
               <div className="flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>Compliant with India's Digital Personal Data Protection (DPDP) Act 2023.</span>
+                <span>Designed to support India&apos;s Digital Personal Data Protection (DPDP) Act 2023 requirements.</span>
               </div>
               <div className="flex items-start gap-2">
                 <Lock className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />

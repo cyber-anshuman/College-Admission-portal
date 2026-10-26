@@ -1,39 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
   GraduationCap,
-  ShieldCheck,
   Lock,
   Mail,
-  Smartphone,
-  ArrowRight,
   AlertCircle,
-  KeyRound,
-  UserCheck,
   Sparkles,
 } from 'lucide-react';
-import { api, setStoredToken, setStoredUser } from '../../../lib/api';
+import { api, setStoredToken } from '../../../lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
   const [tab, setTab] = useState<'applicant' | 'staff'>('applicant');
   const [authMode, setAuthMode] = useState<'password' | 'otp'>('password');
+  const [otpEnabled, setOtpEnabled] = useState(true);
 
   // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [identifier, setIdentifier] = useState('');
   const [otp, setOtp] = useState('');
-  const [simulatedOtp, setSimulatedOtp] = useState<string | null>(null);
   const [otpSent, setOtpSent] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Quick filler for demo
+  useEffect(() => {
+    api.getConfig().then((cfg) => {
+      if (cfg && cfg.otpEnabled === false) {
+        setOtpEnabled(false);
+        setAuthMode('password');
+      }
+    }).catch(() => {
+      // Fallback to password mode if config endpoint fails
+    });
+  }, []);
+
+  // Quick filler for demo (tree-shaken in production)
   const fillCredentials = (userEmail: string, userPass: string) => {
     setEmail(userEmail);
     setPassword(userPass);
@@ -48,10 +54,6 @@ export default function LoginPage() {
     try {
       const response = await api.login({ email, password });
       setStoredToken(response.tokens.accessToken);
-      setStoredUser({
-        ...response.user,
-        applicantProfile: response.applicantProfile,
-      });
       router.push('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Authentication failed. Please verify your credentials.');
@@ -69,12 +71,8 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const resp = await api.sendOtp({ identifier });
+      await api.sendOtp({ identifier });
       setOtpSent(true);
-      if (resp.simulatedOtp) {
-        setSimulatedOtp(resp.simulatedOtp);
-        setOtp(resp.simulatedOtp); // Auto-populate in dev for effortless testing
-      }
     } catch (err: any) {
       setError(err.message || 'Failed to send verification code');
     } finally {
@@ -89,15 +87,11 @@ export default function LoginPage() {
 
     try {
       const resp = await api.verifyOtp({ identifier, otp });
-      if (resp.tokens) {
+      if (resp.tokens && resp.tokens.accessToken) {
         setStoredToken(resp.tokens.accessToken);
-        setStoredUser({
-          ...resp.user,
-          applicantProfile: resp.applicantProfile,
-        });
         router.push('/dashboard');
       } else {
-        setError('Identifier verified, but no active account was found. Please register first.');
+        setError('Identifier verified, but no active applicant account was found. Please register or use password login.');
       }
     } catch (err: any) {
       setError(err.message || 'Invalid or expired OTP code');
@@ -167,39 +161,41 @@ export default function LoginPage() {
           {tab === 'applicant' && (
             <div>
               {/* Applicant Submode Switch: Password vs OTP */}
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-6">
-                <span className="text-xs font-semibold text-slate-700">Authentication Method:</span>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthMode('password');
-                      setError(null);
-                    }}
-                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-colors ${
-                      authMode === 'password'
-                        ? 'bg-institutional-100 text-institutional-800'
-                        : 'text-slate-500 hover:bg-slate-100'
-                    }`}
-                  >
-                    Password
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAuthMode('otp');
-                      setError(null);
-                    }}
-                    className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-colors ${
-                      authMode === 'otp'
-                        ? 'bg-institutional-100 text-institutional-800'
-                        : 'text-slate-500 hover:bg-slate-100'
-                    }`}
-                  >
-                    OTP Login
-                  </button>
+              {otpEnabled && (
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-6">
+                  <span className="text-xs font-semibold text-slate-700">Authentication Method:</span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode('password');
+                        setError(null);
+                      }}
+                      className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-colors ${
+                        authMode === 'password'
+                          ? 'bg-institutional-100 text-institutional-800'
+                          : 'text-slate-500 hover:bg-slate-100'
+                      }`}
+                    >
+                      Password
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode('otp');
+                        setError(null);
+                      }}
+                      className={`px-2.5 py-1 text-[11px] font-semibold rounded-md transition-colors ${
+                        authMode === 'otp'
+                          ? 'bg-institutional-100 text-institutional-800'
+                          : 'text-slate-500 hover:bg-slate-100'
+                      }`}
+                    >
+                      OTP Login
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {authMode === 'password' ? (
                 <form onSubmit={handlePasswordLogin} className="space-y-4">
@@ -246,19 +242,21 @@ export default function LoginPage() {
                   </button>
 
                   {/* One-click demo filler */}
-                  <div className="pt-2 border-t border-slate-100">
-                    <p className="text-[11px] text-slate-400 mb-1.5 font-medium">Quick Demo Credentials:</p>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        fillCredentials('applicant.rahul@example.com', 'Applicant@123')
-                      }
-                      className="w-full text-left p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-[11px] text-slate-700 flex items-center justify-between"
-                    >
-                      <span>Rahul Sharma (Verified OBC)</span>
-                      <span className="text-institutional-600 font-bold">Fill →</span>
-                    </button>
-                  </div>
+                  {process.env.NODE_ENV !== 'production' && (
+                    <div className="pt-2 border-t border-slate-100">
+                      <p className="text-[11px] text-slate-400 mb-1.5 font-medium">Quick Demo Credentials:</p>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          fillCredentials('applicant.rahul@example.com', 'Applicant@123')
+                        }
+                        className="w-full text-left p-2 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-[11px] text-slate-700 flex items-center justify-between"
+                      >
+                        <span>Rahul Sharma (Verified OBC)</span>
+                        <span className="text-institutional-600 font-bold">Fill →</span>
+                      </button>
+                    </div>
+                  )}
                 </form>
               ) : (
                 <form onSubmit={handleVerifyOtp} className="space-y-4">
@@ -285,13 +283,6 @@ export default function LoginPage() {
                       </button>
                     </div>
                   </div>
-
-                  {simulatedOtp && (
-                    <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 flex items-center justify-between">
-                      <span>Simulated OTP: <strong>{simulatedOtp}</strong></span>
-                      <span className="text-[10px] bg-emerald-100 px-1.5 py-0.5 rounded">Auto-filled</span>
-                    </div>
-                  )}
 
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -375,31 +366,33 @@ export default function LoginPage() {
               </form>
 
               {/* Demo Quick-Role Switcher */}
-              <div className="mt-6 pt-6 border-t border-slate-100">
-                <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 mb-2">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                  <span>One-Click Role Testers (Pre-seeded Accounts):</span>
+              {process.env.NODE_ENV !== 'production' && (
+                <div className="mt-6 pt-6 border-t border-slate-100">
+                  <div className="flex items-center gap-1 text-[11px] font-bold text-slate-700 mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    <span>One-Click Role Testers (Pre-seeded Accounts):</span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1.5 text-xs">
+                    {[
+                      { role: 'Super Admin', email: 'admin@college.edu' },
+                      { role: 'Admission Officer', email: 'officer@college.edu' },
+                      { role: 'Reviewer / HOD (CSE)', email: 'hod.cse@college.edu' },
+                      { role: 'Accounts Officer', email: 'accounts@college.edu' },
+                      { role: 'Auditor', email: 'auditor@college.edu' },
+                    ].map((staff) => (
+                      <button
+                        key={staff.email}
+                        type="button"
+                        onClick={() => fillCredentials(staff.email, 'Password@123')}
+                        className="text-left px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-[11px] flex items-center justify-between text-slate-700"
+                      >
+                        <span className="font-semibold">{staff.role}</span>
+                        <span className="text-slate-400 font-mono text-[10px]">{staff.email}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 gap-1.5 text-xs">
-                  {[
-                    { role: 'Super Admin', email: 'admin@college.edu' },
-                    { role: 'Admission Officer', email: 'officer@college.edu' },
-                    { role: 'Reviewer / HOD (CSE)', email: 'hod.cse@college.edu' },
-                    { role: 'Accounts Officer', email: 'accounts@college.edu' },
-                    { role: 'Auditor', email: 'auditor@college.edu' },
-                  ].map((staff) => (
-                    <button
-                      key={staff.email}
-                      type="button"
-                      onClick={() => fillCredentials(staff.email, 'Password@123')}
-                      className="text-left px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-[11px] flex items-center justify-between text-slate-700"
-                    >
-                      <span className="font-semibold">{staff.role}</span>
-                      <span className="text-slate-400 font-mono text-[10px]">{staff.email}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
+              )}
             </div>
           )}
         </div>

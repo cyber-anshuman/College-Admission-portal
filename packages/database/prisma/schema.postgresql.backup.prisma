@@ -1,0 +1,377 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  APPLICANT
+  ADMISSION_OFFICER
+  REVIEWER_HOD
+  ACCOUNTS
+  ADMIN
+  AUDITOR
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_VERIFICATION
+  RETURNED_FOR_CORRECTION
+  VERIFIED
+  MERIT_LISTED
+  SEAT_OFFERED
+  DECLINED
+  WITHDRAWN
+  ACCEPTED_FEE_PAID
+  ADMITTED
+}
+
+enum QuotaCategory {
+  GENERAL
+  OBC_NCL
+  SC
+  ST
+  EWS
+  MANAGEMENT_NRI
+  PWD
+}
+
+enum DegreeLevel {
+  UNDERGRADUATE
+  POSTGRADUATE
+  DIPLOMA
+  DOCTORAL
+}
+
+enum DocumentType {
+  PASSPORT_PHOTO
+  SIGNATURE
+  CLASS_10_MARKSHEET
+  CLASS_12_MARKSHEET
+  GRADUATION_MARKSHEET
+  ENTRANCE_SCORECARD
+  CASTE_CERTIFICATE
+  INCOME_CERTIFICATE
+  TRANSFER_CERTIFICATE
+  IDENTITY_PROOF
+}
+
+enum DocumentVerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AllotmentStatus {
+  OFFERED
+  ACCEPTED
+  DECLINED
+  EXPIRED
+  WITHDRAWN
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentType {
+  APPLICATION_FEE
+  SEAT_ACCEPTANCE_FEE
+  FIRST_SEMESTER_TUITION_FEE
+}
+
+enum AuditAction {
+  USER_REGISTER
+  USER_LOGIN
+  OTP_SENT
+  OTP_VERIFIED
+  APPLICATION_CREATED
+  APPLICATION_SUBMITTED
+  APPLICATION_VERIFIED
+  APPLICATION_RETURNED
+  DOCUMENT_UPLOADED
+  DOCUMENT_VERIFIED
+  DOCUMENT_REJECTED
+  SEAT_ALLOTTED
+  SEAT_ACCEPTED
+  SEAT_DECLINED
+  PAYMENT_PROCESSED
+  CONFIG_UPDATED
+  SEATS_UPDATED
+}
+
+model User {
+  id               String      @id @default(uuid())
+  email            String      @unique
+  phone            String?     @unique
+  passwordHash     String
+  role             Role        @default(APPLICANT)
+  isActive         Boolean     @default(true)
+  isEmailVerified  Boolean     @default(false)
+  isPhoneVerified  Boolean     @default(false)
+  lastLoginAt      DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  applicantProfile Applicant?
+  auditLogs        AuditLog[]
+  officerApps      Application[] @relation("OfficerAssignedApplications")
+  reviewerApps     Application[] @relation("ReviewerAssignedApplications")
+
+  @@index([email])
+  @@index([role])
+}
+
+model Applicant {
+  id                 String        @id @default(uuid())
+  userId             String        @unique
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firstName          String
+  lastName           String
+  dateOfBirth        DateTime?
+  gender             String?
+  category           QuotaCategory @default(GENERAL)
+  guardianName       String?
+  guardianPhone      String?
+  addressLine1       String?
+  city               String?
+  state              String?
+  pincode            String?
+  aadharMasked       String?
+  dpdpConsentGivenAt DateTime      @default(now())
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  applications       Application[]
+
+  @@index([category])
+}
+
+model Program {
+  id                  String              @id @default(uuid())
+  code                String              @unique
+  name                String
+  degreeLevel         DegreeLevel
+  department          String
+  durationYears       Int
+  baseFee             Float
+  applicationFee      Float               @default(1000)
+  eligibilityCriteria Json
+  isActive            Boolean             @default(true)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  quotas              SeatQuota[]
+  choices             ApplicationChoice[]
+  allotments          Allotment[]
+  meritLists          MeritList[]
+
+  @@index([code])
+  @@index([isActive])
+}
+
+model SeatQuota {
+  id              String        @id @default(uuid())
+  programId       String
+  program         Program       @relation(fields: [programId], references: [id], onDelete: Cascade)
+  category        QuotaCategory
+  totalSeats      Int
+  allottedSeats   Int           @default(0)
+  confirmedSeats  Int           @default(0)
+  version         Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([programId, category])
+  @@index([programId])
+}
+
+model Application {
+  id                   String            @id @default(uuid())
+  applicationNumber    String            @unique
+  applicantId          String
+  applicant            Applicant         @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  academicYear         String
+  currentStatus        ApplicationStatus @default(DRAFT)
+  assignedOfficerId    String?
+  assignedOfficer      User?             @relation("OfficerAssignedApplications", fields: [assignedOfficerId], references: [id])
+  assignedReviewerId   String?
+  assignedReviewer     User?             @relation("ReviewerAssignedApplications", fields: [assignedReviewerId], references: [id])
+  verificationRemarks  String?
+  submittedAt          DateTime?
+  verifiedAt           DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  choices              ApplicationChoice[]
+  documents            Document[]
+  examScores           ExamScore[]
+  payments             Payment[]
+  allotments           Allotment[]
+  meritListItems       MeritListItem[]
+  notifications        Notification[]
+
+  @@index([applicationNumber])
+  @@index([currentStatus])
+  @@index([applicantId])
+}
+
+model ApplicationChoice {
+  id              String      @id @default(uuid())
+  applicationId   String
+  application     Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  programId       String
+  program         Program     @relation(fields: [programId], references: [id])
+  preferenceOrder Int
+  createdAt       DateTime    @default(now())
+
+  @@unique([applicationId, preferenceOrder])
+  @@unique([applicationId, programId])
+  @@index([applicationId])
+}
+
+model Document {
+  id                 String                     @id @default(uuid())
+  applicationId      String
+  application        Application                @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  documentType       DocumentType
+  fileName           String
+  s3Key              String
+  mimeType           String
+  fileSizeBytes      Int
+  verificationStatus DocumentVerificationStatus @default(PENDING)
+  rejectionReason    String?
+  verifiedAt         DateTime?
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+
+  @@index([applicationId])
+  @@index([verificationStatus])
+}
+
+model ExamScore {
+  id            String      @id @default(uuid())
+  applicationId String
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  examName      String
+  rollNumber    String
+  scoreObtained Float
+  maxScore      Float
+  percentile    Float?
+  yearOfPassing Int
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([applicationId])
+}
+
+model MeritList {
+  id          String          @id @default(uuid())
+  programId   String
+  program     Program         @relation(fields: [programId], references: [id])
+  roundNumber Int
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  items       MeritListItem[]
+
+  @@unique([programId, roundNumber])
+}
+
+model MeritListItem {
+  id             String      @id @default(uuid())
+  meritListId    String
+  meritList      MeritList   @relation(fields: [meritListId], references: [id], onDelete: Cascade)
+  applicationId  String
+  application    Application @relation(fields: [applicationId], references: [id])
+  rank           Int
+  categoryRank   Int?
+  compositeScore Float
+  createdAt      DateTime    @default(now())
+
+  @@unique([meritListId, rank])
+  @@index([meritListId])
+  @@index([applicationId])
+}
+
+model Allotment {
+  id            String          @id @default(uuid())
+  applicationId String
+  application   Application     @relation(fields: [applicationId], references: [id])
+  programId     String
+  program       Program         @relation(fields: [programId], references: [id])
+  quotaCategory QuotaCategory
+  roundNumber   Int
+  status        AllotmentStatus @default(OFFERED)
+  deadline      DateTime
+  acceptedAt    DateTime?
+  declinedAt    DateTime?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([applicationId])
+  @@index([programId])
+  @@index([status])
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  applicationId String
+  application   Application   @relation(fields: [applicationId], references: [id])
+  paymentType   PaymentType
+  amount        Float
+  currency      String        @default("INR")
+  status        PaymentStatus @default(PENDING)
+  gatewayRef    String?
+  receiptNumber String?       @unique
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([applicationId])
+  @@index([status])
+  @@index([receiptNumber])
+}
+
+model Notification {
+  id            String       @id @default(uuid())
+  applicationId String?
+  application   Application? @relation(fields: [applicationId], references: [id])
+  recipient     String
+  channel       String
+  title         String
+  message       String
+  isRead        Boolean      @default(false)
+  sentAt        DateTime     @default(now())
+
+  @@index([recipient])
+  @@index([applicationId])
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  actorId    String?
+  actor      User?       @relation(fields: [actorId], references: [id])
+  actorRole  Role?
+  action     AuditAction
+  entityType String
+  entityId   String
+  oldState   Json?
+  newState   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime    @default(now())
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}

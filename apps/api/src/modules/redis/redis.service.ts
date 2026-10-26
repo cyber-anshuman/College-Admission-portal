@@ -1,6 +1,17 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+
+export interface RotateSessionResult {
+  status: 'ROTATED' | 'GRACE_ACCEPTED' | 'NOT_FOUND' | 'REUSE_REVOKED' | 'MISMATCH_REVOKED';
+  currentHash?: string;
+}
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
@@ -21,19 +32,21 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       lazyConnect: true,
       maxRetriesPerRequest: 3,
       retryStrategy: (times) => {
-        if (times > 5) {
-          this.logger.warn('Redis reconnection attempt limit exceeded');
-          return null;
-        }
-        return Math.min(times * 200, 2000);
+        // Retry forever with capped backoff, NEVER return null
+        const delay = Math.min(times * 200, 5000);
+        this.logger.warn(`Redis disconnected. Reconnecting in ${delay}ms (attempt ${times})...`);
+        return delay;
       },
     });
 
-    this.client.connect().then(() => {
-      this.logger.log(`Redis connected successfully at ${host}:${port}`);
-    }).catch((err) => {
-      this.logger.warn(`Redis connection failed: ${err.message}. Fallback cache mode active.`);
-    });
+    this.client
+      .connect()
+      .then(() => {
+        this.logger.log(`Redis connected successfully at ${host}:${port}`);
+      })
+      .catch((err) => {
+        this.logger.warn(`Redis initial connection failed: ${err.message}. Reconnection active.`);
+      });
   }
 
   async onModuleDestroy() {
@@ -46,35 +59,108 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return this.client;
   }
 
+  ensureReady(): void {
+    if (!this.client || this.client.status !== 'ready') {
+      throw new ServiceUnavailableException('Cache service unavailable');
+    }
+  }
+
   async setWithExpiry(key: string, value: string, ttlSeconds: number): Promise<void> {
+    this.ensureReady();
     try {
-      if (this.client && this.client.status === 'ready') {
-        await this.client.set(key, value, 'EX', ttlSeconds);
-      }
+      await this.client.set(key, value, 'EX', ttlSeconds);
     } catch (err: any) {
-      this.logger.warn(`Redis set failed for key ${key}: ${err.message}`);
+      this.logger.error(`Redis set failed for key ${key}: ${err.message}`);
+      throw new ServiceUnavailableException('Cache service unavailable');
     }
   }
 
   async get(key: string): Promise<string | null> {
+    this.ensureReady();
     try {
-      if (this.client && this.client.status === 'ready') {
-        return await this.client.get(key);
-      }
-      return null;
+      return await this.client.get(key);
     } catch (err: any) {
-      this.logger.warn(`Redis get failed for key ${key}: ${err.message}`);
-      return null;
+      this.logger.error(`Redis get failed for key ${key}: ${err.message}`);
+      throw new ServiceUnavailableException('Cache service unavailable');
     }
   }
 
   async del(key: string): Promise<void> {
+    this.ensureReady();
     try {
-      if (this.client && this.client.status === 'ready') {
-        await this.client.del(key);
-      }
+      await this.client.del(key);
     } catch (err: any) {
-      this.logger.warn(`Redis del failed for key ${key}: ${err.message}`);
+      this.logger.error(`Redis del failed for key ${key}: ${err.message}`);
+      throw new ServiceUnavailableException('Cache service unavailable');
+    }
+  }
+
+  async incrWithExpiry(key: string, ttlSeconds: number): Promise<number> {
+    this.ensureReady();
+    const lua = `
+      local val = redis.call('INCR', KEYS[1])
+      if val == 1 then
+        redis.call('EXPIRE', KEYS[1], ARGV[1])
+      end
+      return val
+    `;
+    try {
+      const res = await this.client.eval(lua, 1, key, ttlSeconds);
+      return Number(res);
+    } catch (err: any) {
+      this.logger.error(`Redis incrWithExpiry failed for key ${key}: ${err.message}`);
+      throw new ServiceUnavailableException('Cache service unavailable');
+    }
+  }
+
+  async rotateSession(
+    key: string,
+    incomingHash: string,
+    newHash: string,
+    graceMs: number,
+    ttlSeconds: number,
+  ): Promise<RotateSessionResult> {
+    this.ensureReady();
+    const lua = `
+      local timeTable = redis.call('TIME')
+      local nowMs = tonumber(timeTable[1]) * 1000 + math.floor(tonumber(timeTable[2]) / 1000)
+
+      local data = redis.call('GET', KEYS[1])
+      if not data then
+        return cjson.encode({ status = 'NOT_FOUND' })
+      end
+
+      local session = cjson.decode(data)
+      local incomingHash = ARGV[1]
+      local newHash = ARGV[2]
+      local graceMs = tonumber(ARGV[3])
+      local ttlSec = tonumber(ARGV[4])
+
+      if session.currentHash == incomingHash then
+        session.previousHash = session.currentHash
+        session.previousHashExpiresAt = nowMs + graceMs
+        session.currentHash = newHash
+        redis.call('SET', KEYS[1], cjson.encode(session), 'EX', ttlSec)
+        return cjson.encode({ status = 'ROTATED' })
+      elseif session.previousHash and session.previousHash == incomingHash then
+        local expiresAt = tonumber(session.previousHashExpiresAt or 0)
+        if nowMs <= expiresAt then
+          return cjson.encode({ status = 'GRACE_ACCEPTED', currentHash = session.currentHash })
+        else
+          redis.call('DEL', KEYS[1])
+          return cjson.encode({ status = 'REUSE_REVOKED' })
+        end
+      else
+        redis.call('DEL', KEYS[1])
+        return cjson.encode({ status = 'MISMATCH_REVOKED' })
+      end
+    `;
+    try {
+      const result = await this.client.eval(lua, 1, key, incomingHash, newHash, graceMs, ttlSeconds);
+      return JSON.parse(result as string) as RotateSessionResult;
+    } catch (err: any) {
+      this.logger.error(`Redis rotateSession failed for key ${key}: ${err.message}`);
+      throw new ServiceUnavailableException('Cache service unavailable');
     }
   }
 }

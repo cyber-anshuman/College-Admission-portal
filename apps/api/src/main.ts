@@ -1,20 +1,92 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+const cookieParser = require('cookie-parser');
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
+export function validateConfig() {
+  const jwtSecret = process.env.JWT_SECRET;
+  const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET;
+  const nodeEnv = process.env.NODE_ENV;
+  const trustProxy = process.env.TRUST_PROXY;
+
+  const PLACEHOLDER_JWT = 'super_secret_admission_jwt_key_2026_change_in_production';
+  const PLACEHOLDER_REFRESH = 'super_secret_admission_refresh_key_2026_change_in_production';
+
+  if (!jwtSecret || !jwtRefreshSecret) {
+    throw new Error('FATAL: JWT_SECRET and JWT_REFRESH_SECRET environment variables are both required.');
+  }
+
+  if (jwtSecret.length < 32) {
+    throw new Error(`FATAL: JWT_SECRET must be at least 32 characters long (got ${jwtSecret.length}).`);
+  }
+
+  if (jwtRefreshSecret.length < 32) {
+    throw new Error(`FATAL: JWT_REFRESH_SECRET must be at least 32 characters long (got ${jwtRefreshSecret.length}).`);
+  }
+
+  if (jwtSecret === jwtRefreshSecret) {
+    throw new Error('FATAL: JWT_SECRET and JWT_REFRESH_SECRET must be distinct, separate secrets.');
+  }
+
+  if (nodeEnv === 'production') {
+    if (jwtSecret === PLACEHOLDER_JWT || jwtRefreshSecret === PLACEHOLDER_REFRESH) {
+      throw new Error('FATAL: Cannot use .env.example placeholder secrets in production environment.');
+    }
+    if (!trustProxy) {
+      throw new Error('FATAL: TRUST_PROXY environment variable is required in production.');
+    }
+  }
+
+  if (trustProxy === 'true') {
+    throw new Error('FATAL: TRUST_PROXY cannot be "true". Specify a hop count (e.g. 1 or 2) or CIDR list to prevent IP spoofing.');
+  }
+}
+
 async function bootstrap() {
+  validateConfig();
+
   const logger = new Logger('Bootstrap');
+  const corsOriginEnv = process.env.CORS_ORIGIN || 'http://localhost:3000';
+  const allowedOrigins = corsOriginEnv
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
   const app = await NestFactory.create(AppModule, {
     cors: {
-      origin: [
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        process.env.CORS_ORIGIN || 'http://localhost:3000',
-      ],
+      origin: allowedOrigins,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     },
+  });
+
+  const trustProxyEnv = process.env.TRUST_PROXY;
+  if (trustProxyEnv) {
+    const val = !isNaN(Number(trustProxyEnv)) ? Number(trustProxyEnv) : trustProxyEnv;
+    (app.getHttpAdapter().getInstance() as any).set('trust proxy', val);
+  }
+
+  // Cookie parser middleware
+  app.use(cookieParser());
+
+  // Global prefix
+  const apiPrefix = process.env.API_PREFIX || 'api';
+  app.setGlobalPrefix(apiPrefix);
+
+  // Helmet with selective Swagger CSP relaxation
+  const isProduction = process.env.NODE_ENV === 'production';
+  const enableSwagger = process.env.ENABLE_SWAGGER === 'true' || !isProduction;
+
+  const standardHelmet = helmet();
+  const docsHelmet = helmet({ contentSecurityPolicy: false });
+
+  app.use((req: any, res: any, next: any) => {
+    if (enableSwagger && req.path?.startsWith(`/${apiPrefix}/docs`)) {
+      return docsHelmet(req, res, next);
+    }
+    return standardHelmet(req, res, next);
   });
 
   // Global validation pipe
@@ -27,43 +99,44 @@ async function bootstrap() {
     }),
   );
 
-  // Global prefix
-  const apiPrefix = process.env.API_PREFIX || 'api';
-  app.setGlobalPrefix(apiPrefix);
+  const port = parseInt(process.env.PORT || '4000', 10);
 
   // Swagger / OpenAPI specification
-  const config = new DocumentBuilder()
-    .setTitle('College Admission Management System API')
-    .setDescription(
-      'Enterprise-grade REST API for admissions workflow: authentication, student registry, quota allocation, document verification, payments and audit.',
-    )
-    .setVersion('1.0.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'Authorization',
-        description: 'Enter your JWT access token',
-        in: 'header',
+  if (enableSwagger) {
+    const config = new DocumentBuilder()
+      .setTitle('College Admission Management System API')
+      .setDescription(
+        'REST API for admissions workflow: authentication, student registry, quota allocation, document verification, payments and audit.',
+      )
+      .setVersion('1.0.0')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'Authorization',
+          description: 'Enter your JWT access token',
+          in: 'header',
+        },
+        'bearer',
+      )
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup(`${apiPrefix}/docs`, app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
       },
-      'bearer',
-    )
-    .build();
+      customSiteTitle: 'Admission System API Docs',
+    });
+    logger.log(`📚 OpenAPI Docs available at: http://localhost:${port}/${apiPrefix}/docs`);
+  }
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(`${apiPrefix}/docs`, app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-    customSiteTitle: 'Admission System API Docs',
-  });
-
-  const port = parseInt(process.env.PORT || '4000', 10);
   await app.listen(port);
 
   logger.log(`🚀 API Server running on: http://localhost:${port}/${apiPrefix}`);
-  logger.log(`📚 OpenAPI Docs available at: http://localhost:${port}/${apiPrefix}/docs`);
 }
 
-bootstrap();
+if (process.env.NODE_ENV !== 'test') {
+  bootstrap();
+}
