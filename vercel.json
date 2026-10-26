@@ -7,7 +7,7 @@
     },
     "api": {
       "root": "apps/api",
-      "entrypoint": "dist/src/main.js"
+      "entrypoint": "src/main.ts"
     }
   },
   "rewrites": [
