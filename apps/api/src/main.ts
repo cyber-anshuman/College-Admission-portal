@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, Logger, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import express, { Express } from 'express';
 const cookieParser = require('cookie-parser');
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -44,23 +46,26 @@ export function validateConfig() {
   }
 }
 
-async function bootstrap() {
+export async function createNestApp(expressInstance?: Express): Promise<INestApplication> {
   validateConfig();
 
-  const logger = new Logger('Bootstrap');
   const corsOriginEnv = process.env.CORS_ORIGIN || 'http://localhost:3000';
   const allowedOrigins = corsOriginEnv
     .split(',')
     .map((origin) => origin.trim())
     .filter(Boolean);
 
-  const app = await NestFactory.create(AppModule, {
+  const nestOptions = {
     cors: {
       origin: allowedOrigins,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     },
-  });
+  };
+
+  const app = expressInstance
+    ? await NestFactory.create(AppModule, new ExpressAdapter(expressInstance), nestOptions)
+    : await NestFactory.create(AppModule, nestOptions);
 
   const trustProxyEnv = process.env.TRUST_PROXY;
   if (trustProxyEnv) {
@@ -99,8 +104,6 @@ async function bootstrap() {
     }),
   );
 
-  const port = parseInt(process.env.PORT || '4000', 10);
-
   // Swagger / OpenAPI specification
   if (enableSwagger) {
     const config = new DocumentBuilder()
@@ -129,14 +132,42 @@ async function bootstrap() {
       },
       customSiteTitle: 'Admission System API Docs',
     });
-    logger.log(`📚 OpenAPI Docs available at: http://localhost:${port}/${apiPrefix}/docs`);
   }
+
+  return app;
+}
+
+let cachedServer: Express | null = null;
+
+// Vercel Serverless Function entrypoint
+export default async function handler(req: any, res: any) {
+  if (!cachedServer) {
+    const expressApp = express();
+    const app = await createNestApp(expressApp);
+    await app.init();
+    cachedServer = expressApp;
+  }
+  return (cachedServer as any)(req, res);
+}
+
+// Standalone server bootstrap for local development
+async function bootstrap() {
+  const logger = new Logger('Bootstrap');
+  const app = await createNestApp();
+  const port = parseInt(process.env.PORT || '4000', 10);
+  const apiPrefix = process.env.API_PREFIX || 'api';
 
   await app.listen(port);
 
   logger.log(`🚀 API Server running on: http://localhost:${port}/${apiPrefix}`);
+  const isProduction = process.env.NODE_ENV === 'production';
+  const enableSwagger = process.env.ENABLE_SWAGGER === 'true' || !isProduction;
+  if (enableSwagger) {
+    logger.log(`📚 OpenAPI Docs available at: http://localhost:${port}/${apiPrefix}/docs`);
+  }
 }
 
-if (process.env.NODE_ENV !== 'test') {
+if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
   bootstrap();
 }
+

@@ -7,6 +7,9 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 const cookieParser = require('cookie-parser');
 import { AppModule } from '../src/app.module';
+import { PrismaService } from '../src/database/prisma.service';
+import * as bcrypt from 'bcryptjs';
+
 
 describe('Auth & Security Endpoints (e2e)', () => {
   let app: INestApplication;
@@ -41,6 +44,27 @@ describe('Auth & Security Endpoints (e2e)', () => {
     if (server && typeof server.setMaxListeners === 'function') {
       server.setMaxListeners(50);
     }
+
+    const prisma = app.get(PrismaService);
+    const passwordHash = await bcrypt.hash('Applicant@123', 10);
+    await prisma.user.upsert({
+      where: { email: 'applicant.rahul@example.com' },
+      update: { passwordHash, isActive: true },
+      create: {
+        email: 'applicant.rahul@example.com',
+        phone: '+919999900001',
+        passwordHash,
+        role: 'APPLICANT' as any,
+        isActive: true,
+        applicantProfile: {
+          create: {
+            firstName: 'Rahul',
+            lastName: 'Sharma',
+            category: 'GENERAL' as any,
+          },
+        },
+      },
+    });
   });
 
   afterAll(async () => {

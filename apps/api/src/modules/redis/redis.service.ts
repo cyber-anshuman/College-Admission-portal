@@ -21,28 +21,49 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   constructor(private configService: ConfigService) {}
 
   onModuleInit() {
+    const redisUrl = this.configService.get<string>('REDIS_URL');
     const host = this.configService.get<string>('REDIS_HOST', 'localhost');
     const port = this.configService.get<number>('REDIS_PORT', 6379);
     const password = this.configService.get<string>('REDIS_PASSWORD', '');
+    const enableTls = this.configService.get<string>('REDIS_TLS') === 'true';
 
-    this.client = new Redis({
-      host,
-      port,
-      password: password || undefined,
+    const commonOptions = {
       lazyConnect: true,
       maxRetriesPerRequest: 3,
-      retryStrategy: (times) => {
+      retryStrategy: (times: number) => {
         // Retry forever with capped backoff, NEVER return null
         const delay = Math.min(times * 200, 5000);
         this.logger.warn(`Redis disconnected. Reconnecting in ${delay}ms (attempt ${times})...`);
         return delay;
       },
-    });
+    };
 
+    if (redisUrl) {
+      this.client = new Redis(redisUrl, {
+        ...commonOptions,
+        ...(enableTls || redisUrl.startsWith('rediss://') ? { tls: {} } : {}),
+      });
+    } else {
+      this.client = new Redis({
+        host,
+        port,
+        password: password || undefined,
+        ...(enableTls ? { tls: {} } : {}),
+        ...commonOptions,
+      });
+    }
+
+    if (typeof this.client?.on === 'function') {
+      this.client.on('error', (err) => {
+        this.logger.warn(`Redis client error: ${err.message}`);
+      });
+    }
+
+    const targetDesc = redisUrl ? 'via REDIS_URL' : `at ${host}:${port}`;
     this.client
       .connect()
       .then(() => {
-        this.logger.log(`Redis connected successfully at ${host}:${port}`);
+        this.logger.log(`Redis connected successfully ${targetDesc}`);
       })
       .catch((err) => {
         this.logger.warn(`Redis initial connection failed: ${err.message}. Reconnection active.`);

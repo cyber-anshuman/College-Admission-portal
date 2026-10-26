@@ -14,6 +14,7 @@ describe('RedisService Outage Recovery & Resilience', () => {
     mockRedisInstance = {
       connect: jest.fn().mockResolvedValue(undefined),
       quit: jest.fn().mockResolvedValue(undefined),
+      on: jest.fn(),
       status: 'ready',
       options: {},
     };

@@ -38,7 +38,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = respObj.message || message;
       error = respObj.error || error;
     } else if (exception instanceof Error) {
-      message = exception.message;
+      message = process.env.NODE_ENV === 'production' ? 'An unexpected internal server error occurred' : exception.message;
     }
 
     if (status >= 500) {
