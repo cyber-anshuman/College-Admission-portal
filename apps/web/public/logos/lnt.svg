@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 50" width="160" height="50">
+  <title>Larsen &amp; Toubro (L&amp;T)</title>
+  <!-- L&T Iconic Interlocking Emblem -->
+  <g transform="translate(6, 5) scale(0.0133)">
+    <!-- Outer Ring -->
+    <path d="M 2889.0587 1499.0437 A 1230.1071 1320.3901 0 1 1  428.8446,1499.0437 A 1230.1071 1320.3901 0 1 1  2889.0587 1499.0437 z" transform="matrix(1.11623, 0, 0, 1.0399, -351.766, -58.8619)" fill="none" stroke="#003e7e" stroke-width="240" />
+    <!-- L Monogram -->
+    <path d="M 1029.4164,286.80935 L 203.4893,1707.2444 L 1260.8356,1711.2344 L 1496.2449,1292.2859 L 750.11741,1292.2859 L 1404.4752,199.02965 L 1029.4164,286.80935 z" fill="#003e7e" stroke="#003e7e" stroke-width="20" />
+    <!-- T Monogram -->
+    <path d="M 1252.8557,2744.6409 L 1891.2535,1699.2644 L 1484.2748,1695.2744 L 1707.7142,1306.2508 L 2753.0905,1308.2458 L 2545.6112,1691.2845 L 2134.6427,1687.2945 L 1508.2148,2760.6008 L 1252.8557,2744.6409 z" fill="#003e7e" stroke="#003e7e" stroke-width="50" />
+  </g>
+  <!-- L&T Bold Branding Text -->
+  <text x="56" y="34" font-family="'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="27" fill="#003e7e" letter-spacing="1">L&amp;T</text>
+</svg>

@@ -150,16 +150,48 @@ export default function Navbar() {
           {/* Industry Anchor Badges & Quick Action CTAs */}
           <div className="hidden lg:flex items-center gap-4">
             {/* Industry Partners Strip */}
-            <div className="flex items-center gap-1.5 border-r border-slate-200 pr-4">
-              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-extrabold tracking-wider border border-slate-200">
-                IBM
-              </span>
-              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                ANSYS
-              </span>
-              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                L&amp;T
-              </span>
+            <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
+              {/* IBM Logo */}
+              <div
+                className="h-8 px-2.5 rounded-md bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center transition-all shadow-xs"
+                title="IBM Software Lab Partner"
+              >
+                <Image
+                  src="/logos/ibm.svg"
+                  alt="IBM"
+                  width={46}
+                  height={17}
+                  className="h-4 w-auto object-contain"
+                />
+              </div>
+
+              {/* ANSYS Logo */}
+              <div
+                className="h-8 px-2.5 rounded-md bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center transition-all shadow-xs"
+                title="Ansys Technology Partner"
+              >
+                <Image
+                  src="/logos/ansys.svg"
+                  alt="ANSYS"
+                  width={52}
+                  height={17}
+                  className="h-4 w-auto object-contain"
+                />
+              </div>
+
+              {/* L&T Logo */}
+              <div
+                className="h-8 px-2.5 rounded-md bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center transition-all shadow-xs"
+                title="Larsen & Toubro EduTech Partner"
+              >
+                <Image
+                  src="/logos/lnt.svg"
+                  alt="L&T"
+                  width={54}
+                  height={17}
+                  className="h-4.5 w-auto object-contain"
+                />
+              </div>
             </div>
 
             {/* Auth / Action Buttons */}
