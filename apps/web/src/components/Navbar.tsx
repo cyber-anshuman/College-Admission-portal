@@ -60,14 +60,10 @@ export default function Navbar() {
       {/* 1. Punjab Government / State Top Bar (Matching admission.punjab.gov.in) */}
       <div className="bg-[#0b1c2d] text-slate-300 text-xs border-b border-slate-700/60 py-1.5 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          {/* Government Endorsement */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 font-medium text-amber-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>ਪੰਜਾਬ ਸਰਕਾਰ • Government of Punjab</span>
-            </div>
-            <span className="hidden md:inline text-slate-500">|</span>
-            <span className="hidden md:inline text-slate-300">
+          {/* Statutory Recognition */}
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-slate-300 font-medium text-xs">
               Estd. Under Punjab State Act No. 22 of 2021 • UGC Recognized under Sec 2(f)
             </span>
           </div>
@@ -117,22 +113,17 @@ export default function Navbar() {
                 A+
               </button>
             </div>
-
-            {/* Language Pill */}
-            <span className="bg-amber-400/20 text-amber-300 font-semibold px-2 py-0.5 rounded text-[10px] border border-amber-400/30">
-              English / ਪੰਜਾਬੀ
-            </span>
           </div>
         </div>
       </div>
 
       {/* 2. Main Institutional Branding Header */}
-      <div className="bg-white border-b border-slate-200 py-2.5 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white border-b border-slate-200 py-3 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* LTSU Logo & Title */}
           <Link href="/" className="flex items-center gap-3 sm:gap-4 group">
             {/* Custom SVG Seal / Crest */}
-            <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#0b1c2d] via-[#163a5f] to-[#1e5285] p-0.5 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="relative w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-gradient-to-tr from-[#0b1c2d] via-[#163a5f] to-[#1e5285] p-0.5 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
               <div className="w-full h-full rounded-full border border-amber-400/40 flex flex-col items-center justify-center text-center p-1 bg-[#0b1c2d]">
                 <GraduationCap className="w-6 h-6 text-amber-400 shrink-0" />
                 <span className="text-[7px] font-black tracking-widest text-white uppercase leading-none mt-0.5">
@@ -142,44 +133,33 @@ export default function Navbar() {
             </div>
 
             <div>
-              <div className="text-[11px] sm:text-xs font-semibold text-slate-500 tracking-wide">
-                ਲਮਰੀਨ ਟੈਕ ਸਕਿੱਲਜ਼ ਯੂਨੀਵਰਸਿਟੀ ਪੰਜਾਬ
-              </div>
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-slate-900 tracking-tight text-lg sm:text-xl lg:text-2xl leading-tight">
                   Lamrin Tech Skills University Punjab
                 </span>
-                <span className="hidden xl:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 uppercase">
+                <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 uppercase">
                   Session 2026-27
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-600 font-medium line-clamp-1">
-                India&apos;s First Industry-Led Skill University • Near Chandigarh, Ropar (Punjab)
-              </p>
             </div>
           </Link>
 
           {/* Industry Anchor Badges & Quick Action CTAs */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-4">
             {/* Industry Partners Strip */}
-            <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-right leading-tight">
-                Anchored<br />By
+            <div className="flex items-center gap-1.5 border-r border-slate-200 pr-4">
+              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-extrabold tracking-wider border border-slate-200">
+                IBM
               </span>
-              <div className="flex items-center gap-1.5">
-                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-extrabold tracking-wider border border-slate-200">
-                  IBM
-                </span>
-                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                  TATA Tech
-                </span>
-                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                  ANSYS
-                </span>
-                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                  L&amp;T
-                </span>
-              </div>
+              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                TATA Tech
+              </span>
+              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                ANSYS
+              </span>
+              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                L&amp;T
+              </span>
             </div>
 
             {/* Auth / Action Buttons */}

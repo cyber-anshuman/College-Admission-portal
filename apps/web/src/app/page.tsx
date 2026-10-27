@@ -374,15 +374,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           {/* Left Column (Banner & Information) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex flex-wrap items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 text-xs font-semibold text-amber-300">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Centralized Online Admission Portal • Academic Session 2026-27</span>
-            </div>
-
             <div>
-              <div className="text-amber-400 font-bold text-sm uppercase tracking-wider mb-1">
-                ਲਮਰੀਨ ਟੈਕ ਸਕਿੱਲਜ਼ ਯੂਨੀਵਰਸਿਟੀ ਪੰਜਾਬ (ਰੋਪੜ)
-              </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
                 Empowering Youth with <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200">Industry-Led Skills</span> &amp; Assured Careers
               </h1>
@@ -391,30 +383,6 @@ export default function HomePage() {
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
               Welcome to the centralized admission portal of <strong>Lamrin Tech Skills University Punjab (LTSU)</strong>. Established by the Punjab State Legislature (Act No. 22 of 2021) and recognized by the UGC. Experience education structured <em>&quot;of the industry, for the industry, and by the industry&quot;</em> in partnership with global technology leaders.
             </p>
-
-            {/* Industry Collaboration Pills */}
-            <div className="bg-white/5 backdrop-blur p-4 rounded-xl border border-white/10 space-y-2">
-              <span className="text-[11px] font-bold text-amber-300 uppercase tracking-wider block">
-                Official Skilling &amp; Curriculum Partners
-              </span>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-md bg-[#001d6c] text-white text-xs font-black tracking-wide border border-blue-400/30">
-                  IBM Software Lab
-                </span>
-                <span className="px-3 py-1 rounded-md bg-[#1a426e] text-white text-xs font-bold border border-blue-400/30">
-                  Tata Technologies CoE
-                </span>
-                <span className="px-3 py-1 rounded-md bg-[#c97d00] text-white text-xs font-bold border border-yellow-400/30">
-                  Ansys Simulation Lab
-                </span>
-                <span className="px-3 py-1 rounded-md bg-[#0b3c5d] text-white text-xs font-bold border border-blue-400/30">
-                  L&amp;T Construction
-                </span>
-                <span className="px-3 py-1 rounded-md bg-emerald-900/60 text-emerald-200 text-xs font-semibold border border-emerald-500/30">
-                  PCI &amp; INC Approved
-                </span>
-              </div>
-            </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-3 items-center pt-2">
