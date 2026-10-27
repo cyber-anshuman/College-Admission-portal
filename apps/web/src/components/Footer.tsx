@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ShieldCheck, Lock, Award, Mail, Phone, MapPin, ExternalLink, GraduationCap, Building2 } from 'lucide-react';
 
 export default function Footer() {
@@ -34,8 +35,14 @@ export default function Footer() {
           {/* Col 1: University Statutory Profile */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-amber-400/20 border border-amber-400/40 flex items-center justify-center text-amber-300">
-                <GraduationCap className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-full bg-white overflow-hidden shrink-0 border border-slate-300 shadow-sm flex items-center justify-center">
+                <Image
+                  src="/ltsu-logo.png"
+                  alt="LTSU Seal"
+                  width={36}
+                  height={36}
+                  className="w-full h-full object-contain p-0.5"
+                />
               </div>
               <div>
                 <h3 className="text-white font-bold text-sm tracking-tight leading-tight">
@@ -217,7 +224,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap items-center gap-4 text-[11px]">
             <Link href="/#reservation" className="hover:text-slate-300 transition-colors">
-              Punjab 85% Reservation Norms
+              Punjab 30% Reservation Norms
             </Link>
             <span>•</span>
             <Link href="/#scholarships" className="hover:text-slate-300 transition-colors">

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   GraduationCap,
@@ -122,14 +123,16 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           {/* LTSU Logo & Title */}
           <Link href="/" className="flex items-center gap-3 sm:gap-4 group">
-            {/* Custom SVG Seal / Crest */}
-            <div className="relative w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-gradient-to-tr from-[#0b1c2d] via-[#163a5f] to-[#1e5285] p-0.5 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-              <div className="w-full h-full rounded-full border border-amber-400/40 flex flex-col items-center justify-center text-center p-1 bg-[#0b1c2d]">
-                <GraduationCap className="w-6 h-6 text-amber-400 shrink-0" />
-                <span className="text-[7px] font-black tracking-widest text-white uppercase leading-none mt-0.5">
-                  LTSU
-                </span>
-              </div>
+            {/* LTSU Official Seal / Logo */}
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0 group-hover:scale-105 transition-transform shadow-md bg-white border border-slate-200 flex items-center justify-center">
+              <Image
+                src="/ltsu-logo.png"
+                alt="Lamrin Tech Skills University Punjab"
+                width={56}
+                height={56}
+                className="w-full h-full object-contain p-0.5"
+                priority
+              />
             </div>
 
             <div>
@@ -150,9 +153,6 @@ export default function Navbar() {
             <div className="flex items-center gap-1.5 border-r border-slate-200 pr-4">
               <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-extrabold tracking-wider border border-slate-200">
                 IBM
-              </span>
-              <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
-                TATA Tech
               </span>
               <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
                 ANSYS
@@ -195,7 +195,7 @@ export default function Navbar() {
                   className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-all"
                 >
                   <UserCheck className="w-3.5 h-3.5 text-blue-600" />
-                  <span>Candidate Login</span>
+                  <span>Login</span>
                 </Link>
               </div>
             )}
@@ -248,7 +248,7 @@ export default function Navbar() {
                 href="/#reservation"
                 className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
               >
-                Punjab Quota (85%) &amp; Reservations
+                Punjab Quota (30%) &amp; Reservations
               </Link>
               <Link
                 href="/#scholarships"
@@ -270,14 +270,7 @@ export default function Navbar() {
               </Link>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Link
-                href="/login?tab=staff"
-                className="px-2.5 py-1 rounded bg-amber-400/20 text-amber-300 hover:bg-amber-400 hover:text-slate-900 transition-colors border border-amber-400/30 text-[11px]"
-              >
-                Officer / Staff Portal
-              </Link>
-            </div>
+
           </div>
         </div>
       </nav>
@@ -319,7 +312,7 @@ export default function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
             >
-              Punjab Quota (85%) &amp; Reservation
+              Punjab Quota (30%) &amp; Reservation
             </Link>
             <Link
               href="/#scholarships"
@@ -379,7 +372,7 @@ export default function Navbar() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="w-full text-center py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-600"
                 >
-                  Candidate Sign In
+                  Login
                 </Link>
               </>
             )}

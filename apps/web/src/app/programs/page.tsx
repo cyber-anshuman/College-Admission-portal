@@ -32,24 +32,24 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 120,
-    punjabSeats: 102,
-    allIndiaSeats: 18,
+    punjabSeats: 36,
+    allIndiaSeats: 84,
     baseFee: 145000,
     applicationFee: 1000,
-    specializations: ['AI & Machine Learning', 'Cyber Security', 'Cloud Computing', 'Data Science'],
+    specializations: ['AI & Machine Learning', 'Cyber Security'],
     eligibilityCriteria: {
       minScorePercentage: 60,
       requiredSubjects: ['Physics', 'Mathematics', 'Chemistry/CS'],
       entranceExamAccepted: ['JEE_MAIN', 'LTSU-SET', 'PUNJAB_CET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 51, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 10, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 10, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 3, allottedSeats: 0 },
-      { category: 'PUNJAB_SPORTS_DEFENSE', totalSeats: 2, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 18, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 18, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 4, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 3, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_SPORTS_DEFENSE', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 84, allottedSeats: 0 },
     ],
   },
   {
@@ -64,8 +64,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 110000,
     applicationFee: 1000,
     specializations: ['Electric Vehicles', 'Digital Manufacturing', 'Automotive Design', 'Robotics'],
@@ -75,12 +75,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['JEE_MAIN', 'LTSU-SET', 'STATE_CET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 13, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 2, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 5, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 42, allottedSeats: 0 },
     ],
   },
   {
@@ -95,8 +95,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 3,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 65000,
     applicationFee: 800,
     specializations: ['Full Stack Web Dev', 'Cloud Architecture', 'Generative AI Applications'],
@@ -106,12 +106,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['12th_MERIT', 'LTSU-SET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 13, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 2, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 5, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 42, allottedSeats: 0 },
     ],
   },
   {
@@ -126,8 +126,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 2,
     degreeLevel: 'POSTGRADUATE',
     totalSeats: 40,
-    punjabSeats: 34,
-    allIndiaSeats: 6,
+    punjabSeats: 12,
+    allIndiaSeats: 28,
     baseFee: 85000,
     applicationFee: 1000,
     specializations: ['Enterprise AI & Cloud', 'DevOps & Cyber Security'],
@@ -137,12 +137,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['GRADUATION_MERIT', 'LTSU-SET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 17, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 9, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 4, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 3, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 6, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 3, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
       { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 6, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 28, allottedSeats: 0 },
     ],
   },
   {
@@ -157,8 +157,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 95000,
     applicationFee: 1000,
     specializations: ['Pharmaceutics', 'Pharmacology', 'Pharmaceutical Chemistry'],
@@ -168,12 +168,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['12th_MERIT', 'NEET', 'LTSU-SET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 13, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 2, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 5, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 42, allottedSeats: 0 },
     ],
   },
   {
@@ -188,8 +188,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 2,
     degreeLevel: 'DIPLOMA',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 60000,
     applicationFee: 800,
     specializations: ['Hospital Pharmacy', 'Drug Dispensing'],
@@ -199,11 +199,11 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['12th_MERIT'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 13, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 5, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 5, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 42, allottedSeats: 0 },
     ],
   },
   {
@@ -218,8 +218,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 50,
-    punjabSeats: 43,
-    allIndiaSeats: 7,
+    punjabSeats: 15,
+    allIndiaSeats: 35,
     baseFee: 90000,
     applicationFee: 1000,
     specializations: ['Critical Care Nursing', 'Community Health', 'Obstetric Nursing'],
@@ -229,12 +229,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['PPMET', 'LTSU_NURSING_ENTRANCE'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 22, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 11, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 4, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 4, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 2, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 7, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 8, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 4, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 35, allottedSeats: 0 },
     ],
   },
   {
@@ -249,8 +249,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 3,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 60000,
     applicationFee: 800,
     specializations: ['FinTech', 'Digital Marketing & E-Commerce', 'Data Analytics'],
@@ -260,11 +260,11 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['12th_MERIT', 'LTSU-SET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 13, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 5, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 5, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 42, allottedSeats: 0 },
     ],
   },
   {
@@ -279,8 +279,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 2,
     degreeLevel: 'POSTGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 110000,
     applicationFee: 1000,
     specializations: ['Business Analytics', 'Financial Management', 'HR & Strategy'],
@@ -290,12 +290,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['CAT', 'MAT', 'CMAT', 'LTSU-SET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 26, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 13, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 5, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 2, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 9, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 5, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 1, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 42, allottedSeats: 0 },
     ],
   },
   {
@@ -310,8 +310,8 @@ const LTSU_FULL_PROGRAMS = [
     durationYears: 3,
     degreeLevel: 'DIPLOMA',
     totalSeats: 90,
-    punjabSeats: 77,
-    allIndiaSeats: 13,
+    punjabSeats: 27,
+    allIndiaSeats: 63,
     baseFee: 45000,
     applicationFee: 500,
     specializations: ['Mechanical Workshop', 'Embedded Systems', 'Industrial Automation'],
@@ -321,12 +321,12 @@ const LTSU_FULL_PROGRAMS = [
       entranceExamAccepted: ['10th_MERIT', 'PUNJAB_JET'],
     },
     quotas: [
-      { category: 'PUNJAB_GENERAL', totalSeats: 39, allottedSeats: 0 },
-      { category: 'PUNJAB_SC', totalSeats: 19, allottedSeats: 0 },
-      { category: 'PUNJAB_BC', totalSeats: 8, allottedSeats: 0 },
-      { category: 'PUNJAB_EWS', totalSeats: 8, allottedSeats: 0 },
-      { category: 'PUNJAB_PWD', totalSeats: 3, allottedSeats: 0 },
-      { category: 'ALL_INDIA_OPEN', totalSeats: 13, allottedSeats: 0 },
+      { category: 'PUNJAB_GENERAL', totalSeats: 14, allottedSeats: 0 },
+      { category: 'PUNJAB_SC', totalSeats: 7, allottedSeats: 0 },
+      { category: 'PUNJAB_BC', totalSeats: 3, allottedSeats: 0 },
+      { category: 'PUNJAB_EWS', totalSeats: 2, allottedSeats: 0 },
+      { category: 'PUNJAB_PWD', totalSeats: 1, allottedSeats: 0 },
+      { category: 'ALL_INDIA_OPEN', totalSeats: 63, allottedSeats: 0 },
     ],
   },
 ];
@@ -374,7 +374,7 @@ export default function ProgramsPage() {
                 Academic Programs &amp; Seat Matrix
               </h1>
               <p className="text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                Centralized Seat Allotment for <strong>85% Punjab Resident Quota</strong> and <strong>15% All-India Open Quota</strong>. All industry-partnered degrees adhere to UGC and statutory council regulations.
+                Centralized Seat Allotment for <strong>30% Punjab Resident Quota</strong> and <strong>70% All-India Open Quota</strong>. All industry-partnered degrees adhere to UGC and statutory council regulations.
               </p>
             </div>
             <Link
@@ -430,9 +430,6 @@ export default function ProgramsPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                   <div>
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="px-2.5 py-0.5 rounded text-[11px] font-black bg-slate-100 text-slate-800 border border-slate-200">
-                        {prog.code}
-                      </span>
                       <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
                         {prog.partnerBadge}
                       </span>
@@ -489,7 +486,7 @@ export default function ProgramsPage() {
                       Sanctioned Intake Breakdown: <span className="text-blue-700">{prog.totalSeats} Total Seats</span>
                     </span>
                     <span className="text-[11px] text-amber-700 font-semibold">
-                      Punjab Domicile: {prog.punjabSeats} Seats (85%) | All-India: {prog.allIndiaSeats} Seats (15%)
+                      Punjab Domicile: {prog.punjabSeats} Seats (30%) | All-India: {prog.allIndiaSeats} Seats (70%)
                     </span>
                   </div>
 

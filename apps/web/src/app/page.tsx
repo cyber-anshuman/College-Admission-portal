@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   GraduationCap,
@@ -47,11 +48,11 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 120,
-    punjabSeats: 102,
-    allIndiaSeats: 18,
+    punjabSeats: 36,
+    allIndiaSeats: 84,
     baseFee: 145000,
     applicationFee: 1000,
-    specializations: ['AI & Machine Learning', 'Cyber Security', 'Cloud Computing', 'Data Science'],
+    specializations: ['AI & Machine Learning', 'Cyber Security'],
     eligibility: '10+2 with Physics, Mathematics & Chem/CS (Min 60% aggregate) or JEE Main / LTSU-SET',
     status: 'ADMISSIONS OPEN',
   },
@@ -66,8 +67,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 110000,
     applicationFee: 1000,
     specializations: ['Electric Vehicles', 'Digital Manufacturing', 'Automotive Design', 'Robotics'],
@@ -85,8 +86,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 3,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 65000,
     applicationFee: 800,
     specializations: ['Full Stack Web Dev', 'Cloud Computing', 'Generative AI Applications'],
@@ -104,8 +105,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 2,
     degreeLevel: 'POSTGRADUATE',
     totalSeats: 40,
-    punjabSeats: 34,
-    allIndiaSeats: 6,
+    punjabSeats: 12,
+    allIndiaSeats: 28,
     baseFee: 85000,
     applicationFee: 1000,
     specializations: ['Cloud Infrastructure', 'Enterprise AI', 'DevOps & Cyber Security'],
@@ -123,8 +124,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 95000,
     applicationFee: 1000,
     specializations: ['Pharmaceutics', 'Pharmacology', 'Pharmaceutical Chemistry'],
@@ -142,8 +143,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 2,
     degreeLevel: 'DIPLOMA',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 60000,
     applicationFee: 800,
     specializations: ['Hospital Pharmacy', 'Drug Formulation'],
@@ -161,8 +162,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 4,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 50,
-    punjabSeats: 43,
-    allIndiaSeats: 7,
+    punjabSeats: 15,
+    allIndiaSeats: 35,
     baseFee: 90000,
     applicationFee: 1000,
     specializations: ['Critical Care', 'Community Health', 'Surgical Nursing'],
@@ -180,8 +181,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 3,
     degreeLevel: 'UNDERGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 60000,
     applicationFee: 800,
     specializations: ['FinTech', 'Digital Marketing & E-Commerce', 'Business Analytics'],
@@ -199,8 +200,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 2,
     degreeLevel: 'POSTGRADUATE',
     totalSeats: 60,
-    punjabSeats: 51,
-    allIndiaSeats: 9,
+    punjabSeats: 18,
+    allIndiaSeats: 42,
     baseFee: 110000,
     applicationFee: 1000,
     specializations: ['Business Analytics', 'HR & Corporate Strategy', 'Supply Chain Management'],
@@ -218,8 +219,8 @@ const LTSU_PROGRAMS_CATALOG = [
     durationYears: 3,
     degreeLevel: 'DIPLOMA',
     totalSeats: 90,
-    punjabSeats: 77,
-    allIndiaSeats: 13,
+    punjabSeats: 27,
+    allIndiaSeats: 63,
     baseFee: 45000,
     applicationFee: 500,
     specializations: ['Mechanical Workshop', 'Embedded Systems', 'Network Tech'],
@@ -277,11 +278,31 @@ export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [totalIntake, setTotalIntake] = useState<number>(660);
 
-  // Quick candidate login widget state
-  const [loginEmail, setLoginEmail] = useState('');
-  const [loginPassword, setLoginPassword] = useState('');
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [loginError, setLoginError] = useState<string | null>(null);
+
+  // Quick Enquiry Form state
+  const [sessionMode, setSessionMode] = useState<'online' | 'offline'>('online');
+  const [enquiryForm, setEnquiryForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+  });
+  const [enquirySubmitted, setEnquirySubmitted] = useState(false);
+  const [enquiryLoading, setEnquiryLoading] = useState(false);
+
+
+  const handleEnquirySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!enquiryForm.name || !enquiryForm.phone) {
+      alert('Please fill out your name and phone number.');
+      return;
+    }
+    setEnquiryLoading(true);
+    setTimeout(() => {
+      setEnquiryLoading(false);
+      setEnquirySubmitted(true);
+    }, 600);
+  };
 
   // Notice board active tab
   const [noticeTab, setNoticeTab] = useState<'notices' | 'downloads' | 'guidelines'>('notices');
@@ -305,22 +326,6 @@ export default function HomePage() {
       });
   }, []);
 
-  const handleQuickLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError(null);
-    setLoginLoading(true);
-
-    try {
-      const response = await api.login({ email: loginEmail, password: loginPassword });
-      setStoredToken(response.tokens.accessToken);
-      router.push('/dashboard');
-    } catch (err: any) {
-      setLoginError(err.message || 'Invalid login credentials. Please verify your email and password.');
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
   const filteredPrograms = programsList.filter((p) => {
     const matchesCat = selectedCategory === 'ALL' || p.category === selectedCategory;
     const matchesSearch =
@@ -332,219 +337,247 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 font-sans">
+
       {/* =========================================================================
-          1. LIVE NOTIFICATION TICKER / NEWS FLASH (Matches Punjab Portal Header)
+          2. HERO SECTION: DUAL COLUMN WITH LTSU CAMPUS BACKDROP
       ========================================================================= */}
-      <div className="bg-[#b31d28] text-white text-xs font-medium py-2 px-4 shadow-inner border-b border-rose-900/40">
-        <div className="max-w-7xl mx-auto flex items-center gap-3 overflow-hidden">
-          <div className="flex items-center gap-1.5 bg-amber-400 text-slate-950 font-black px-2.5 py-0.5 rounded text-[11px] uppercase tracking-wide shrink-0 animate-pulse">
-            <Sparkles className="w-3 h-3" />
-            <span>Latest Flash</span>
-          </div>
-
-          <div className="truncate flex-1 flex items-center space-x-8 text-[12px]">
-            <span className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-300" />
-              <strong>Admissions 2026-27:</strong> Online Candidate Registration &amp; Choice Filling is now live for all Undergraduate, Diploma &amp; Postgraduate programs.
-            </span>
-            <span className="hidden md:inline-flex items-center gap-2 text-amber-200">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-300" />
-              <strong>LTSU-SET 2026:</strong> Scholarship Entrance Exam registrations open. Merit scholarships up to 100% available.
-            </span>
-            <span className="hidden lg:inline-flex items-center gap-2 text-rose-100">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-300" />
-              <strong>PMS Scheme:</strong> 100% tuition fee waiver for eligible SC/ST students of Punjab under State Post-Matric Scholarship.
-            </span>
-          </div>
-
-          <Link
-            href="#downloads"
-            className="hidden sm:inline-flex items-center gap-1 text-[11px] font-bold text-amber-300 hover:text-white underline shrink-0"
-          >
-            <span>View All Circulars</span>
-            <ChevronRight className="w-3 h-3" />
-          </Link>
+      <section className="relative text-white py-10 lg:py-14 px-4 sm:px-6 lg:px-8 overflow-hidden border-b border-slate-800 min-h-[580px] flex items-center">
+        {/* Background Campus Photo properly aligned so building, signboard & entrance are visible */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/campus-building.jpg"
+            alt="Lamrin Tech Skills University Punjab Campus"
+            fill
+            priority
+            className="object-cover object-[center_55%] filter brightness-[0.70] contrast-[1.05]"
+          />
+          {/* Balanced gradient overlay so campus is clearly visible while text has high contrast */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#071728]/85 via-[#071728]/55 to-[#071728]/70" />
+          <div className="absolute inset-0 bg-black/25" />
         </div>
-      </div>
 
-      {/* =========================================================================
-          2. HERO SECTION: DUAL PANEL (Left: Portal Banner, Right: Candidate Login Box)
-      ========================================================================= */}
-      <section className="relative bg-gradient-to-br from-[#071728] via-[#0f2b48] to-[#163a5f] text-white py-12 lg:py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-700/80">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* Left Column (Banner & Information) */}
-          <div className="lg:col-span-7 space-y-6">
-            <div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
-                Empowering Youth with <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-200">Industry-Led Skills</span> &amp; Assured Careers
-              </h1>
-            </div>
-
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              Welcome to the centralized admission portal of <strong>Lamrin Tech Skills University Punjab (LTSU)</strong>. Established by the Punjab State Legislature (Act No. 22 of 2021) and recognized by the UGC. Experience education structured <em>&quot;of the industry, for the industry, and by the industry&quot;</em> in partnership with global technology leaders.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3 items-center pt-2">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold text-slate-950 bg-gradient-to-r from-amber-400 via-amber-300 to-yellow-400 hover:from-amber-300 hover:to-yellow-300 shadow-lg shadow-amber-400/25 transition-all hover:scale-105"
-              >
-                <span>New Candidate Registration</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/programs"
-                className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl text-sm font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur transition-all"
-              >
-                <Layers className="w-4 h-4 text-amber-300" />
-                <span>Explore Seat Matrix</span>
-              </Link>
-              <Link
-                href="#schedule"
-                className="inline-flex items-center gap-2 px-4 py-3.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white transition-colors"
-              >
-                <Calendar className="w-4 h-4" />
-                <span>Admission Dates</span>
-              </Link>
-            </div>
-
-            {/* Quick Metrics Bar */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-white/10 text-center sm:text-left">
+        <div className="max-w-7xl mx-auto relative z-10 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            
+            {/* Left Column: Heading, Subtitle, Stats, Pill CTAs */}
+            <div className="lg:col-span-7 space-y-4 lg:space-y-5">
+              {/* Huge Bold Title with text drop-shadow for crystal-clear readability */}
               <div>
-                <p className="text-2xl sm:text-3xl font-black text-amber-400 tracking-tight">85%</p>
-                <p className="text-[11px] text-slate-400 font-medium">Punjab Resident Quota</p>
+                <h1 className="text-3xl sm:text-4xl lg:text-[46px] font-black tracking-tight text-white leading-[1.08] drop-shadow-[0_3px_10px_rgba(0,0,0,0.9)]">
+                  Shape Your <br />
+                  Future in <br />
+                  <span className="text-[#dfad4b] drop-shadow-[0_2px_14px_rgba(223,173,75,0.45)]">Industry &amp;</span> <br />
+                  <span className="text-[#dfad4b] drop-shadow-[0_2px_14px_rgba(223,173,75,0.45)]">Tech Leadership</span>
+                </h1>
               </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-white tracking-tight">100+</p>
-                <p className="text-[11px] text-slate-400 font-medium">Acres Green Campus</p>
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">660+</p>
-                <p className="text-[11px] text-slate-400 font-medium">Sanctioned Seats (2026)</p>
-              </div>
-              <div>
-                <p className="text-2xl sm:text-3xl font-black text-blue-400 tracking-tight">100%</p>
-                <p className="text-[11px] text-slate-400 font-medium">Online Transparent Process</p>
-              </div>
-            </div>
-          </div>
 
-          {/* Right Column (Candidate Action & Quick Login Box) */}
-          <div className="lg:col-span-5">
-            <div className="bg-white text-slate-900 rounded-2xl shadow-2xl border-4 border-amber-400/40 p-6 sm:p-7 relative overflow-hidden">
-              {/* Header Badge */}
-              <div className="bg-[#12283e] -mx-7 -mt-7 px-7 py-4 text-white mb-6 border-b border-slate-700 flex items-center justify-between">
+              {/* Subtitle / Description */}
+              <p className="text-slate-200 text-xs sm:text-sm leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_5px_rgba(0,0,0,0.9)]">
+                Join <strong>Lamrin Tech Skills University Punjab (LTSU)</strong> — India&apos;s pioneering skill university established with IBM, Tata Technologies, Ansys &amp; L&amp;T. Experience high-impact degree programs with 100% placement aid &amp; merit scholarships.
+              </p>
+
+              {/* Stats Row with big gold numbers */}
+              <div className="grid grid-cols-3 sm:flex sm:items-center gap-4 sm:gap-10 pt-1">
                 <div>
-                  <h2 className="text-base font-bold flex items-center gap-2 text-amber-300">
-                    <UserCheck className="w-5 h-5 text-amber-400" />
-                    <span>Candidate Portal Sign In</span>
-                  </h2>
-                  <p className="text-[11px] text-slate-300 mt-0.5">
-                    For Registered Applicants &amp; Enrolled Candidates
-                  </p>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#dfad4b] tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">3560<span className="text-[#dfad4b]">+</span></p>
+                  <p className="text-[10px] sm:text-xs font-bold text-slate-300 uppercase tracking-widest mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Students</p>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                  LIVE
-                </span>
+                <div>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#dfad4b] tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">100<span className="text-[#dfad4b]">+</span></p>
+                  <p className="text-[10px] sm:text-xs font-bold text-slate-300 uppercase tracking-widest mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Acres Campus</p>
+                </div>
+                <div>
+                  <p className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#dfad4b] tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">100<span className="text-[#dfad4b]">%</span></p>
+                  <p className="text-[10px] sm:text-xs font-bold text-slate-300 uppercase tracking-widest mt-0.5 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">Placement Aid</p>
+                </div>
               </div>
 
-              {loginError && (
-                <div className="mb-4 p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                  <span>{loginError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleQuickLogin} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Registered Email / Application No. <span className="text-rose-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
-                    <input
-                      type="email"
-                      required
-                      value={loginEmail}
-                      onChange={(e) => setLoginEmail(e.target.value)}
-                      placeholder="e.g. applicant@example.com"
-                      className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#12283e] focus:border-transparent outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block text-xs font-bold text-slate-700">
-                      Password <span className="text-rose-500">*</span>
-                    </label>
-                    <Link
-                      href="/login"
-                      className="text-[11px] text-blue-600 hover:text-blue-800 font-semibold hover:underline"
-                    >
-                      Forgot Password?
-                    </Link>
-                  </div>
-                  <div className="relative">
-                    <Lock className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
-                    <input
-                      type="password"
-                      required
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="••••••••••••"
-                      className="w-full pl-9 pr-3 py-2.5 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-[#12283e] focus:border-transparent outline-none transition-all"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loginLoading}
-                  className="w-full py-3 rounded-xl font-bold text-sm text-white bg-[#12283e] hover:bg-[#0b1c2d] shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-                >
-                  {loginLoading ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Authenticating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Login to Applicant Portal</span>
-                      <ArrowRight className="w-4 h-4" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              <div className="mt-5 pt-4 border-t border-slate-200 text-center space-y-3">
-                <p className="text-xs text-slate-600 font-medium">
-                  Not registered yet for Session 2026-27?
-                </p>
+              {/* Dual Landing Page Action Buttons */}
+              <div className="flex flex-wrap items-center gap-3 pt-1">
                 <Link
                   href="/register"
-                  className="block w-full py-2.5 rounded-xl font-bold text-xs text-[#0f2b48] bg-amber-100 hover:bg-amber-200 border border-amber-300 transition-colors"
+                  className="px-7 py-3 rounded-full text-xs sm:text-sm font-black text-slate-950 bg-[#e0b04c] hover:bg-[#d49f38] shadow-lg shadow-black/40 hover:scale-[1.03] active:scale-[0.98] transition-all text-center border border-amber-200 uppercase tracking-wide inline-flex items-center gap-2"
                 >
-                  ✨ Register as a New Candidate
+                  <span>Apply for Admission 2026-27</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
-
-                <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
-                  <Link
-                    href="/login"
-                    className="p-1.5 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold"
-                  >
-                    Login via OTP
-                  </Link>
-                  <Link
-                    href="/login?tab=staff"
-                    className="p-1.5 rounded bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold"
-                  >
-                    Officer / Staff Login
-                  </Link>
-                </div>
+                <a
+                  href="#programs"
+                  className="px-7 py-3 rounded-full text-xs sm:text-sm font-bold text-white border border-sky-400/40 hover:border-sky-300 bg-slate-900/70 hover:bg-slate-800/80 backdrop-blur shadow-lg shadow-black/30 hover:scale-[1.02] active:scale-[0.98] transition-all text-center inline-flex items-center gap-2"
+                >
+                  <GraduationCap className="w-4 h-4 text-amber-300" />
+                  <span>Explore Programs</span>
+                </a>
               </div>
             </div>
+
+            {/* Right Column: Floating White Card "Quick Enquiry" */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+              <div className="w-full max-w-sm sm:max-w-md bg-white rounded-[26px] p-5 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)] text-slate-800 border border-white/80">
+                
+                {/* Card Top: Quick Enquiry Header */}
+                <div className="text-center pb-0.5">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base">
+                    Quick Admission Enquiry
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5 font-medium">
+                    Get an instant callback from our admission counselor
+                  </p>
+                </div>
+
+                {enquirySubmitted ? (
+                  <div className="py-6 text-center space-y-3">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-inner">
+                      <CheckCircle2 className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-900">Enquiry Submitted!</h3>
+                    <p className="text-xs text-slate-600 max-w-xs mx-auto leading-relaxed">
+                      Thank you, <strong className="text-slate-900">{enquiryForm.name}</strong>. An LTSU admission advisor will contact you at <strong className="text-slate-900">{enquiryForm.phone}</strong> regarding your <strong className="uppercase text-amber-700">{sessionMode}</strong> counseling.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEnquirySubmitted(false);
+                        setEnquiryForm({ name: '', email: '', phone: '', subject: '' });
+                      }}
+                      className="mt-2 px-5 py-2 rounded-full text-xs font-bold text-[#c59b46] border border-[#c59b46] hover:bg-[#c59b46] hover:text-white transition-all shadow-sm"
+                    >
+                      Submit Another Enquiry
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleEnquirySubmit} className="mt-2.5 space-y-3">
+                    {/* Subhead inside Card */}
+                    <div>
+                      <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
+                        Book Free Counseling Session
+                      </h2>
+                      <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                        Guidance for 2026-27 admissions, scholarships &amp; hostel
+                      </p>
+                    </div>
+
+                    {/* Select Session Mode */}
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-800 mb-1.5">
+                        Preferred Counseling Mode
+                      </label>
+                      <div className="grid grid-cols-2 gap-2.5">
+                        {/* Online Option */}
+                        <button
+                          type="button"
+                          onClick={() => setSessionMode('online')}
+                          className={`relative flex items-center justify-center py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                            sessionMode === 'online'
+                              ? 'border-2 border-[#731f2b] text-[#731f2b] bg-rose-50/20 shadow-sm'
+                              : 'border border-slate-300 text-slate-600 hover:border-slate-400 bg-white'
+                          }`}
+                        >
+                          {sessionMode === 'online' && (
+                            <span className="absolute -top-1.5 -left-1.5 w-4 h-4 rounded-full bg-[#731f2b] text-white flex items-center justify-center shadow">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            </span>
+                          )}
+                          <span>Online Video Call</span>
+                        </button>
+
+                        {/* Offline Option */}
+                        <button
+                          type="button"
+                          onClick={() => setSessionMode('offline')}
+                          className={`relative flex items-center justify-center py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                            sessionMode === 'offline'
+                              ? 'border-2 border-[#731f2b] text-[#731f2b] bg-rose-50/20 shadow-sm'
+                              : 'border border-slate-300 text-slate-600 hover:border-slate-400 bg-white'
+                          }`}
+                        >
+                          {sessionMode === 'offline' && (
+                            <span className="absolute -top-1.5 -left-1.5 w-4 h-4 rounded-full bg-[#731f2b] text-white flex items-center justify-center shadow">
+                              <Check className="w-2.5 h-2.5 stroke-[3]" />
+                            </span>
+                          )}
+                          <span>Campus Visit</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Inputs */}
+                    <div className="space-y-2 pt-0.5">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-800 mb-0.5">
+                          Full Name
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={enquiryForm.name}
+                          onChange={(e) => setEnquiryForm({ ...enquiryForm, name: e.target.value })}
+                          placeholder="Enter your full name"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#c59b46] focus:ring-1 focus:ring-[#c59b46] transition-all bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-800 mb-0.5">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={enquiryForm.email}
+                          onChange={(e) => setEnquiryForm({ ...enquiryForm, email: e.target.value })}
+                          placeholder="Enter your email"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#c59b46] focus:ring-1 focus:ring-[#c59b46] transition-all bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-800 mb-0.5">
+                          Mobile / Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          value={enquiryForm.phone}
+                          onChange={(e) => setEnquiryForm({ ...enquiryForm, phone: e.target.value })}
+                          placeholder="Enter 10-digit mobile number"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#c59b46] focus:ring-1 focus:ring-[#c59b46] transition-all bg-white"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-800 mb-0.5">
+                          Preferred Program / Stream
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={enquiryForm.subject}
+                          onChange={(e) => setEnquiryForm({ ...enquiryForm, subject: e.target.value })}
+                          placeholder="e.g. B.Tech IBM CSE, BCA, Pharmacy, MBA"
+                          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-800 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#c59b46] focus:ring-1 focus:ring-[#c59b46] transition-all bg-white"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      disabled={enquiryLoading}
+                      className="w-full py-3 mt-1 rounded-full bg-[#c59b46] hover:bg-[#b38a37] active:scale-[0.99] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2"
+                    >
+                      {enquiryLoading ? (
+                        <span>Submitting...</span>
+                      ) : (
+                        <span>SUBMIT ADMISSION ENQUIRY</span>
+                      )}
+                    </button>
+                  </form>
+                )}
+
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -687,15 +720,14 @@ export default function HomePage() {
                 className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col justify-between overflow-hidden group"
               >
                 <div className="p-6">
-                  {/* Top Badges */}
-                  <div className="flex items-center justify-between gap-2 mb-3">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-black tracking-wide bg-slate-100 text-slate-800 border border-slate-200 uppercase">
-                      {prog.code}
-                    </span>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 uppercase">
-                      {prog.partnerBadge}
-                    </span>
-                  </div>
+                  {/* Top Partner Badge */}
+                  {prog.partnerBadge && (
+                    <div className="flex items-center justify-end mb-3">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 uppercase">
+                        {prog.partnerBadge}
+                      </span>
+                    </div>
+                  )}
 
                   <h3 className="font-extrabold text-slate-900 text-base leading-snug mb-1 group-hover:text-blue-700 transition-colors">
                     {prog.name}
@@ -719,25 +751,9 @@ export default function HomePage() {
                   )}
 
                   {/* Eligibility */}
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-4 text-[11px] text-slate-600">
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-[11px] text-slate-600">
                     <strong className="text-slate-900 block mb-0.5">Eligibility:</strong>
                     {prog.eligibility}
-                  </div>
-
-                  {/* Quota Split Info */}
-                  <div className="grid grid-cols-3 gap-2 text-center pt-2 border-t border-slate-100">
-                    <div className="p-1.5 rounded bg-slate-50">
-                      <span className="text-[10px] text-slate-400 block font-medium">Total Intake</span>
-                      <span className="text-xs font-bold text-slate-800">{prog.totalSeats}</span>
-                    </div>
-                    <div className="p-1.5 rounded bg-amber-50 border border-amber-200/40">
-                      <span className="text-[10px] text-amber-700 block font-medium">Punjab (85%)</span>
-                      <span className="text-xs font-bold text-amber-900">{prog.punjabSeats} Seats</span>
-                    </div>
-                    <div className="p-1.5 rounded bg-blue-50 border border-blue-200/40">
-                      <span className="text-[10px] text-blue-700 block font-medium">All India (15%)</span>
-                      <span className="text-xs font-bold text-blue-900">{prog.allIndiaSeats} Seats</span>
-                    </div>
                   </div>
                 </div>
 
@@ -844,7 +860,7 @@ export default function HomePage() {
                 Punjab Domicile Quota &amp; Category Reservation
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                As per the Punjab State Higher Education reservation policy and LTSU Act, <strong>85% of total sanctioned seats</strong> in all undergraduate and postgraduate programs are reserved for candidates having bona-fide domicile of Punjab. The remaining <strong>15% seats</strong> are open for All-India candidates on merit.
+                As per the Punjab State Higher Education reservation policy and LTSU Act, <strong>30% of total sanctioned seats</strong> in all undergraduate and postgraduate programs are reserved for candidates having bona-fide domicile of Punjab. The remaining <strong>70% seats</strong> are open for All-India candidates on merit.
               </p>
 
               <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1.5">
@@ -1086,13 +1102,19 @@ export default function HomePage() {
 
             <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-900 font-bold text-lg">
-                  DSK
+                <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 shadow-md shrink-0 bg-slate-100">
+                  <Image
+                    src="/chancellor.jpg"
+                    alt="S. Nirmal Singh Rayat"
+                    width={56}
+                    height={56}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 text-sm">Dr. Sandeep Singh Kaura</h4>
+                  <h4 className="font-bold text-slate-900 text-sm">S. NIRMAL SINGH RAYAT</h4>
                   <p className="text-xs text-slate-500">Chancellor, LTSU Punjab</p>
-                  <p className="text-[10px] text-amber-700 font-semibold">Advisor, Punjab Skill Development Mission</p>
+                  <p className="text-[10px] text-amber-700 font-semibold">President, Rayat Educational &amp; Research Trust (RERT)</p>
                 </div>
               </div>
               <blockquote className="text-xs text-slate-600 italic border-l-2 border-amber-400 pl-3 leading-relaxed">
@@ -1179,7 +1201,7 @@ export default function HomePage() {
               <div className="space-y-3">
                 {[
                   {
-                    q: 'Who is eligible under the 85% Punjab Resident Quota?',
+                    q: 'Who is eligible under the 30% Punjab Resident Quota?',
                     a: 'Candidates who are bona-fide residents of Punjab, or whose parents have resided in Punjab for minimum 5 years, or candidates who completed their 10th and 12th schooling from a recognized institution located within the State of Punjab.',
                   },
                   {
