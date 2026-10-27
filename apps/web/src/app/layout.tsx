@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import MobileThumbBar from '../components/MobileThumbBar';
 
 export const metadata: Metadata = {
   title: 'LTSU Centralized Admissions Portal 2026-27 | Lamrin Tech Skills University Punjab',
@@ -25,10 +26,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-full flex flex-col font-sans bg-slate-50 text-slate-900">
+      <body className="h-full flex flex-col font-sans bg-slate-50 text-slate-900 pb-16 md:pb-0">
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
+        <MobileThumbBar />
       </body>
     </html>
   );
