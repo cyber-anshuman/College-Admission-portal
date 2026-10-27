@@ -140,9 +140,6 @@ export default function Navbar() {
                 <span className="font-extrabold text-slate-900 tracking-tight text-lg sm:text-xl lg:text-2xl leading-tight">
                   Lamrin Tech Skills University Punjab
                 </span>
-                <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 uppercase">
-                  Session 2026-27
-                </span>
               </div>
             </div>
           </Link>
