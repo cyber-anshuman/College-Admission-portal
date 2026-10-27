@@ -4,15 +4,17 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Apex Institute Admissions Portal 2026-27 | Higher Education Admission System',
+  title: 'LTSU Centralized Admissions Portal 2026-27 | Lamrin Tech Skills University Punjab',
   description:
-    'Official centralized online admission management system for undergraduate engineering and postgraduate management programs. Auditable workflow from application to confirmed seat.',
+    'Official Centralized Online Admission Management System for Lamrin Tech Skills University (LTSU) Punjab, Ropar. First Industry-led Skill University in India, Estd. under Punjab State Act No. 22 of 2021 | UGC Recognized.',
   keywords: [
-    'College Admissions',
-    'B.Tech Admission 2026',
-    'Engineering College Admissions',
-    'MBA Admissions',
-    'Merit Seat Allotment',
+    'Lamrin Tech Skills University',
+    'LTSU Punjab Admission 2026',
+    'LTSU Ropar',
+    'Punjab College Admissions',
+    'B.Tech CSE IBM LTSU',
+    'Rayat Institute of Pharmacy',
+    'Centralized Admission Punjab',
   ],
 };
 

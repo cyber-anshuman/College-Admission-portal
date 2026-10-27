@@ -11,6 +11,13 @@ import {
   Menu,
   X,
   LayoutDashboard,
+  Phone,
+  Mail,
+  FileText,
+  Calendar,
+  Sparkles,
+  ExternalLink,
+  ChevronDown,
 } from 'lucide-react';
 import { api } from '../lib/api';
 
@@ -18,6 +25,7 @@ export default function Navbar() {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [fontSizeLevel, setFontSizeLevel] = useState<number>(1); // 0 = A-, 1 = A, 2 = A+
 
   useEffect(() => {
     api.getMe()
@@ -37,178 +45,365 @@ export default function Navbar() {
     router.push('/login');
   };
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'ADMIN':
-        return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'ADMISSION_OFFICER':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'REVIEWER_HOD':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-300';
-      case 'ACCOUNTS':
-        return 'bg-amber-100 text-amber-800 border-amber-300';
-      case 'AUDITOR':
-        return 'bg-emerald-100 text-emerald-800 border-emerald-300';
-      default:
-        return 'bg-cyan-100 text-cyan-800 border-cyan-300';
+  const cycleFontSize = (level: number) => {
+    setFontSizeLevel(level);
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      if (level === 0) root.style.fontSize = '14px';
+      else if (level === 2) root.style.fontSize = '18px';
+      else root.style.fontSize = '16px';
     }
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo & College Brand */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-institutional-800 to-institutional-600 flex items-center justify-center text-white shadow-md shadow-institutional-900/20 group-hover:scale-105 transition-transform">
-              <GraduationCap className="w-6 h-6" />
+    <header className="sticky top-0 z-50 shadow-md">
+      {/* 1. Punjab Government / State Top Bar (Matching admission.punjab.gov.in) */}
+      <div className="bg-[#0b1c2d] text-slate-300 text-xs border-b border-slate-700/60 py-1.5 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          {/* Government Endorsement */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 font-medium text-amber-300">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>ਪੰਜਾਬ ਸਰਕਾਰ • Government of Punjab</span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-slate-900 tracking-tight text-lg leading-tight">
-                  Apex Institute
-                </span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800 uppercase tracking-wide border border-emerald-200">
-                  Admissions 2026
+            <span className="hidden md:inline text-slate-500">|</span>
+            <span className="hidden md:inline text-slate-300">
+              Estd. Under Punjab State Act No. 22 of 2021 • UGC Recognized under Sec 2(f)
+            </span>
+          </div>
+
+          {/* Quick Helplines & Accessibility */}
+          <div className="flex items-center gap-4 text-[11px]">
+            <a
+              href="tel:01881270693"
+              className="hidden sm:flex items-center gap-1 text-slate-300 hover:text-amber-300 transition-colors"
+            >
+              <Phone className="w-3 h-3 text-amber-400" />
+              <span>Helpline: 01881-270693 / +91 8480005390</span>
+            </a>
+            <a
+              href="mailto:admissions@ltsu.ac.in"
+              className="hidden lg:flex items-center gap-1 text-slate-300 hover:text-amber-300 transition-colors"
+            >
+              <Mail className="w-3 h-3 text-blue-400" />
+              <span>admissions@ltsu.ac.in</span>
+            </a>
+
+            {/* Accessibility Font Size Switcher */}
+            <div className="flex items-center gap-1 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">
+              <span className="text-[10px] text-slate-400 mr-1">Text:</span>
+              <button
+                type="button"
+                onClick={() => cycleFontSize(0)}
+                className={`px-1 rounded font-bold hover:text-white ${fontSizeLevel === 0 ? 'text-amber-400' : 'text-slate-400'}`}
+                title="Decrease font size"
+              >
+                A-
+              </button>
+              <button
+                type="button"
+                onClick={() => cycleFontSize(1)}
+                className={`px-1 rounded font-bold hover:text-white ${fontSizeLevel === 1 ? 'text-amber-400' : 'text-slate-400'}`}
+                title="Normal font size"
+              >
+                A
+              </button>
+              <button
+                type="button"
+                onClick={() => cycleFontSize(2)}
+                className={`px-1 rounded font-bold hover:text-white ${fontSizeLevel === 2 ? 'text-amber-400' : 'text-slate-400'}`}
+                title="Increase font size"
+              >
+                A+
+              </button>
+            </div>
+
+            {/* Language Pill */}
+            <span className="bg-amber-400/20 text-amber-300 font-semibold px-2 py-0.5 rounded text-[10px] border border-amber-400/30">
+              English / ਪੰਜਾਬੀ
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Main Institutional Branding Header */}
+      <div className="bg-white border-b border-slate-200 py-2.5 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          {/* LTSU Logo & Title */}
+          <Link href="/" className="flex items-center gap-3 sm:gap-4 group">
+            {/* Custom SVG Seal / Crest */}
+            <div className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-[#0b1c2d] via-[#163a5f] to-[#1e5285] p-0.5 shadow-md flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-full h-full rounded-full border border-amber-400/40 flex flex-col items-center justify-center text-center p-1 bg-[#0b1c2d]">
+                <GraduationCap className="w-6 h-6 text-amber-400 shrink-0" />
+                <span className="text-[7px] font-black tracking-widest text-white uppercase leading-none mt-0.5">
+                  LTSU
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium">Technology & Management</p>
+            </div>
+
+            <div>
+              <div className="text-[11px] sm:text-xs font-semibold text-slate-500 tracking-wide">
+                ਲਮਰੀਨ ਟੈਕ ਸਕਿੱਲਜ਼ ਯੂਨੀਵਰਸਿਟੀ ਪੰਜਾਬ
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-slate-900 tracking-tight text-lg sm:text-xl lg:text-2xl leading-tight">
+                  Lamrin Tech Skills University Punjab
+                </span>
+                <span className="hidden xl:inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 uppercase">
+                  Session 2026-27
+                </span>
+              </div>
+              <p className="text-[11px] sm:text-xs text-slate-600 font-medium line-clamp-1">
+                India&apos;s First Industry-Led Skill University • Near Chandigarh, Ropar (Punjab)
+              </p>
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6">
-            <Link
-              href="/"
-              className="text-sm font-medium text-slate-600 hover:text-institutional-700 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/programs"
-              className="text-sm font-medium text-slate-600 hover:text-institutional-700 transition-colors"
-            >
-              Programs & Seat Matrix
-            </Link>
-            <Link
-              href="/#status-workflow"
-              className="text-sm font-medium text-slate-600 hover:text-institutional-700 transition-colors"
-            >
-              Admissions Workflow
-            </Link>
-          </nav>
+          {/* Industry Anchor Badges & Quick Action CTAs */}
+          <div className="hidden lg:flex items-center gap-3">
+            {/* Industry Partners Strip */}
+            <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block text-right leading-tight">
+                Anchored<br />By
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-extrabold tracking-wider border border-slate-200">
+                  IBM
+                </span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                  TATA Tech
+                </span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                  ANSYS
+                </span>
+                <span className="px-2 py-1 rounded bg-slate-100 text-slate-800 text-xs font-bold border border-slate-200">
+                  L&amp;T
+                </span>
+              </div>
+            </div>
 
-          {/* User Controls / Auth CTAs */}
-          <div className="hidden md:flex items-center gap-3">
+            {/* Auth / Action Buttons */}
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white bg-[#163a5f] hover:bg-[#0b1c2d] transition-all shadow-sm"
                 >
-                  <LayoutDashboard className="w-4 h-4 text-slate-500" />
-                  Dashboard
+                  <LayoutDashboard className="w-3.5 h-3.5" />
+                  <span>My Portal</span>
                 </Link>
-                <div
-                  className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${getRoleBadgeColor(
-                    user.role,
-                  )}`}
-                >
-                  {user.role}
-                </div>
                 <button
+                  type="button"
                   onClick={handleLogout}
-                  title="Sign out"
-                  className="p-1.5 text-slate-400 hover:text-red-600 rounded-md transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Logout</span>
                 </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
                 <Link
-                  href="/login"
-                  className="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-institutional-800 transition-colors"
+                  href="/register"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 transition-all shadow-md shadow-amber-500/20 animate-pulse"
                 >
-                  Sign In
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>New Candidate Registration</span>
                 </Link>
                 <Link
-                  href="/register"
-                  className="px-4 py-2 text-sm font-semibold text-white bg-institutional-700 hover:bg-institutional-800 rounded-lg shadow-sm shadow-institutional-700/30 transition-all hover:shadow"
+                  href="/login"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 transition-all"
                 >
-                  Apply Now
+                  <UserCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Candidate Login</span>
                 </Link>
               </div>
             )}
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
+          {/* Mobile Menu Trigger */}
+          <div className="flex md:hidden">
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-600 hover:text-slate-900 rounded-lg"
-              aria-label="Toggle menu"
+              className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 border border-slate-200"
+              aria-label="Toggle navigation"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer */}
-      {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-3">
-          <Link
-            href="/"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            Home
-          </Link>
-          <Link
-            href="/programs"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block px-3 py-2 text-base font-medium text-slate-700 hover:bg-slate-50 rounded-md"
-          >
-            Programs & Seat Matrix
-          </Link>
-          {user ? (
-            <>
+      {/* 3. Sub-Navigation Bar (Centralized Admission Portal Theme: Deep Navy & Gold) */}
+      <nav className="bg-[#12283e] text-white hidden md:block">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-11 text-xs font-semibold">
+            <div className="flex items-center space-x-1 lg:space-x-2">
               <Link
-                href="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-base font-medium text-institutional-700 bg-institutional-50 rounded-md"
+                href="/"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-amber-300 hover:text-white transition-colors"
               >
-                Dashboard ({user.role})
-              </Link>
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleLogout();
-                }}
-                className="w-full text-left px-3 py-2 text-base font-medium text-red-600 hover:bg-red-50 rounded-md"
-              >
-                Sign Out
-              </button>
-            </>
-          ) : (
-            <div className="pt-2 flex flex-col gap-2">
-              <Link
-                href="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center px-4 py-2 text-sm font-medium text-slate-700 border border-slate-300 rounded-lg"
-              >
-                Sign In
+                Home
               </Link>
               <Link
-                href="/register"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center px-4 py-2 text-sm font-semibold text-white bg-institutional-700 rounded-lg"
+                href="/#about-ltsu"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
               >
-                Apply Now
+                About LTSU
+              </Link>
+              <Link
+                href="/programs"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
+              >
+                Programs &amp; Seat Matrix
+              </Link>
+              <Link
+                href="/#schedule"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
+              >
+                Admission Schedule 2026-27
+              </Link>
+              <Link
+                href="/#reservation"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
+              >
+                Punjab Quota (85%) &amp; Reservations
+              </Link>
+              <Link
+                href="/#scholarships"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
+              >
+                LTSU-SET &amp; Scholarships
+              </Link>
+              <Link
+                href="/#downloads"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
+              >
+                Prospectus &amp; Notices
+              </Link>
+              <Link
+                href="/#helpdesk"
+                className="px-3 py-1.5 rounded hover:bg-white/10 text-slate-200 hover:text-white transition-colors"
+              >
+                Helpdesk
               </Link>
             </div>
-          )}
+
+            <div className="flex items-center gap-2">
+              <Link
+                href="/login?tab=staff"
+                className="px-2.5 py-1 rounded bg-amber-400/20 text-amber-300 hover:bg-amber-400 hover:text-slate-900 transition-colors border border-amber-400/30 text-[11px]"
+              >
+                Officer / Staff Portal
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* 4. Mobile Menu Drawer */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-[#0b1c2d] text-white border-b border-slate-700 px-4 py-4 space-y-3">
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded bg-white/10 text-amber-300 text-sm font-semibold"
+            >
+              Home
+            </Link>
+            <Link
+              href="/#about-ltsu"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              About LTSU
+            </Link>
+            <Link
+              href="/programs"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              Programs &amp; Seat Matrix
+            </Link>
+            <Link
+              href="/#schedule"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              Admission Schedule 2026-27
+            </Link>
+            <Link
+              href="/#reservation"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              Punjab Quota (85%) &amp; Reservation
+            </Link>
+            <Link
+              href="/#scholarships"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              LTSU-SET 2026 Scholarship
+            </Link>
+            <Link
+              href="/#downloads"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              Prospectus &amp; Circulars
+            </Link>
+            <Link
+              href="/#helpdesk"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded hover:bg-white/5 text-slate-200 text-sm font-medium"
+            >
+              Contact &amp; Helpline
+            </Link>
+          </div>
+
+          <div className="pt-3 border-t border-slate-700 flex flex-col gap-2">
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-lg bg-blue-600 text-white font-bold text-sm"
+                >
+                  Go to Candidate Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full text-center py-2.5 rounded-lg bg-rose-600/30 text-rose-300 font-semibold text-sm border border-rose-500/40"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md"
+                >
+                  New Candidate Registration
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-600"
+                >
+                  Candidate Sign In
+                </Link>
+              </>
+            )}
+          </div>
         </div>
       )}
     </header>

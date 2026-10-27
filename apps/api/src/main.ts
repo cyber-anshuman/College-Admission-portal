@@ -89,7 +89,7 @@ export async function createNestApp(expressInstance?: Express): Promise<INestApp
   if (httpAdapter && typeof (httpAdapter.getInstance() as any)?.get === 'function') {
     (httpAdapter.getInstance() as any).get('/', (_req: any, res: any) => {
       res.json({
-        name: 'Apex Institute Admissions Management API',
+        name: 'Lamrin Tech Skills University Punjab Admissions Management API',
         status: 'online',
         timestamp: new Date().toISOString(),
         endpoints: {

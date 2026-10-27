@@ -112,7 +112,7 @@ export default function LoginPage() {
           Admissions Portal Sign In
         </h2>
         <p className="mt-1 text-center text-xs text-slate-500">
-          Apex Institute of Technology & Management
+          Lamrin Tech Skills University Punjab (LTSU), Ropar
         </p>
 
         {/* Portal Mode Tabs */}

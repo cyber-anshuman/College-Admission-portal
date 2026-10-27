@@ -99,7 +99,7 @@ export default function RegisterPage() {
           Applicant Registration
         </h2>
         <p className="mt-1 text-center text-xs text-slate-500">
-          Academic Year 2026-27 • Apex Institute of Technology & Management
+          Academic Year 2026-27 • Lamrin Tech Skills University Punjab (LTSU)
         </p>
       </div>
 
@@ -260,7 +260,7 @@ export default function RegisterPage() {
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline" />
                     Digital Personal Data Protection (DPDP) Act 2023 Consent
                   </strong>
-                  I explicitly authorize Apex Institute of Technology to process my personal, academic and identity data solely for admission evaluation, merit ranking, document verification and regulatory reporting.
+                  I explicitly authorize Lamrin Tech Skills University Punjab to process my personal, academic and identity data solely for admission evaluation, merit ranking, document verification and regulatory reporting.
                 </label>
               </div>
             </div>
