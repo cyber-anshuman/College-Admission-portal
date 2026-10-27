@@ -103,12 +103,28 @@ export async function apiRequest<T = any>(
 
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   const url = `${API_BASE_URL}${cleanEndpoint}`;
-
-  const res = await fetch(url, {
-    ...options,
-    headers,
-    credentials: 'include',
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      ...options,
+      headers,
+      credentials: 'include',
+    });
+  } catch (err: any) {
+    if (err.name === 'TypeError' || (err.message && err.message.toLowerCase().includes('fetch'))) {
+      const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+      const isTargetHttp = url.startsWith('http://');
+      if (isHttps && isTargetHttp) {
+        throw new Error(
+          'Backend connection blocked: This site is running over HTTPS, but attempting to reach an insecure HTTP backend (Mixed Content blocked by your browser). Please configure an HTTPS backend URL in Vercel.',
+        );
+      }
+      throw new Error(
+        `Unable to reach admission server at ${url}. Please ensure the API backend is running and reachable.`,
+      );
+    }
+    throw err;
+  }
 
   // Handle 401 with silent token refresh
   if (
