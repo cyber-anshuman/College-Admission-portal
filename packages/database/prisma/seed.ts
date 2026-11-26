@@ -80,6 +80,38 @@ async function main() {
     console.log(`✓ Seeded user: ${user.email} (${user.role})`);
   }
 
+  // 1b. Seed Primary Applicant (Anshuman Patel)
+  const anshumanPassword = await bcrypt.hash('Lo481216@', 10);
+  await prisma.user.upsert({
+    where: { email: 'anshumanpatel.in@gmail.com' },
+    update: {
+      passwordHash: anshumanPassword,
+      role: Role.APPLICANT,
+      phone: '+919876543000',
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isActive: true,
+    },
+    create: {
+      email: 'anshumanpatel.in@gmail.com',
+      phone: '+919876543000',
+      passwordHash: anshumanPassword,
+      role: Role.APPLICANT,
+      isEmailVerified: true,
+      isPhoneVerified: true,
+      isActive: true,
+      applicantProfile: {
+        create: {
+          firstName: 'Anshuman',
+          lastName: 'Patel',
+          category: QuotaCategory.GENERAL,
+          dpdpConsentGivenAt: new Date(),
+        },
+      },
+    },
+  });
+  console.log(`✓ Seeded user: anshumanpatel.in@gmail.com (APPLICANT)`);
+
   // 2. Seed Applicant 1: Rahul Sharma (Verified Applicant with Profile)
   const rahulUser = await prisma.user.upsert({
     where: { email: 'applicant.rahul@example.com' },

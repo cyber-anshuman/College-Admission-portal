@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>RDBMS Database Inspector - admission_db (MySQL)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; padding: 24px; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 16px; margin-bottom: 20px; }
+    .title { font-size: 22px; font-weight: 700; color: #38bdf8; display: flex; align-items: center; gap: 10px; }
+    .badge { background: #0369a1; color: #e0f2fe; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+    .db-meta { font-size: 13px; color: #94a3b8; }
+    .grid { display: grid; grid-template-columns: 240px 1fr; gap: 20px; }
+    .sidebar { background: #1e293b; border-radius: 12px; padding: 16px; border: 1px solid #334155; }
+    .sidebar h3 { font-size: 13px; text-transform: uppercase; color: #64748b; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .table-list { list-style: none; }
+    .table-list li { padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; color: #cbd5e1; }
+    .table-list li.active { background: #0284c7; color: white; font-weight: 600; }
+    .content { display: flex; flex-direction: column; gap: 20px; }
+    .card { background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; }
+    .card-header { padding: 12px 18px; background: #1e293b; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; }
+    .card-title { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+    th { background: #0f172a; color: #94a3b8; font-weight: 600; padding: 10px 14px; border-bottom: 1px solid #334155; }
+    td { padding: 9px 14px; border-bottom: 1px solid #1e293b; color: #cbd5e1; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+    .tag-admin { background: #dc2626; color: white; }
+    .tag-officer { background: #ea580c; color: white; }
+    .tag-hod { background: #7c3aed; color: white; }
+    .tag-applicant { background: #059669; color: white; }
+    .tag-accounts { background: #d97706; color: white; }
+    .tag-gen { background: #2563eb; color: white; }
+    .tag-sc { background: #9333ea; color: white; }
+    .tag-obc { background: #0891b2; color: white; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      <div class="title">
+        <span>🗄️ Relational Database Management System (RDBMS)</span>
+        <span class="badge">MySQL 8.0 InnoDB</span>
+        <span class="badge" style="background:#16a34a;">3NF Normalization</span>
+      </div>
+      <div class="db-meta" style="margin-top:6px;">
+        Database: <strong>admission_db</strong> | Host: <strong>localhost:3306</strong> | ORM: <strong>Prisma 5.22</strong> | ACID Transactions: <strong>Active</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="sidebar">
+      <h3>Relational Tables (15)</h3>
+      <ul class="table-list">
+        <li class="active"><span>📄 program</span> <span>8 rows</span></li>
+        <li class="active"><span>👥 user</span> <span>18 rows</span></li>
+        <li class="active"><span>🎯 seatquota</span> <span>56 rows</span></li>
+        <li><span>📝 application</span> <span>Active</span></li>
+        <li><span>📋 applicationchoice</span> <span>Active</span></li>
+        <li><span>👤 applicant</span> <span>Active</span></li>
+        <li><span>📎 document</span> <span>Active</span></li>
+        <li><span>📊 examscore</span> <span>Active</span></li>
+        <li><span>🏆 meritlist</span> <span>Active</span></li>
+        <li><span>📌 meritlistitem</span> <span>Active</span></li>
+        <li><span>🎓 allotment</span> <span>Active</span></li>
+        <li><span>💳 payment</span> <span>Active</span></li>
+        <li><span>📜 auditlog</span> <span>Immutable</span></li>
+        <li><span>🔔 notification</span> <span>Active</span></li>
+      </ul>
+    </div>
+
+    <div class="content">
+      <!-- Program Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Table: <code>program</code> (Academic Degree Offerings)</span>
+          <span style="font-size:11px; color:#94a3b8;">PK: <code>id (UUID)</code> | FK in: <code>seatquota</code>, <code>applicationchoice</code></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>CODE</th>
+              <th>NAME</th>
+              <th>LEVEL</th>
+              <th>DEPARTMENT</th>
+              <th>BASE FEE</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td style="font-weight:600; color:#38bdf8;">BSC-NURSING</td>
+              <td style="font-family:sans-serif;">B.Sc. Nursing (University College of Nursing)</td>
+              <td><span class="tag tag-applicant">UNDERGRADUATE</span></td>
+              <td style="font-family:sans-serif; color:#94a3b8;">University College of Nursing (PNRC & INC Recognized)</td>
+              <td style="color:#4ade80;">₹90,000</td>
+            </tr>
+            
+            <tr>
+              <td style="font-weight:600; color:#38bdf8;">MCA-PRO</td>
+              <td style="font-family:sans-serif;">MCA - Master of Computer Applications</td>
+              <td><span class="tag tag-applicant">POSTGRADUATE</span></td>
+              <td style="font-family:sans-serif; color:#94a3b8;">University School of Computing (USC)</td>
+              <td style="color:#4ade80;">₹85,000</td>
+            </tr>
+            
+            <tr>
+              <td style="font-weight:600; color:#38bdf8;">BBA-FINTECH</td>
+              <td style="font-family:sans-serif;">BBA - Bachelor of Business Administration (FinTech & Digital Marketing)</td>
+              <td><span class="tag tag-applicant">UNDERGRADUATE</span></td>
+              <td style="font-family:sans-serif; color:#94a3b8;">University School of Commerce & Management (USCM)</td>
+              <td style="color:#4ade80;">₹60,000</td>
+            </tr>
+            
+            <tr>
+              <td style="font-weight:600; color:#38bdf8;">MBA-INDUSTRY</td>
+              <td style="font-family:sans-serif;">MBA - Master of Business Administration (Industry Integrated)</td>
+              <td><span class="tag tag-applicant">POSTGRADUATE</span></td>
+              <td style="font-family:sans-serif; color:#94a3b8;">University School of Commerce & Management (USCM)</td>
+              <td style="color:#4ade80;">₹1,10,000</td>
+            </tr>
+            
+            <tr>
+              <td style="font-weight:600; color:#38bdf8;">BTECH-ME-TATA</td>
+              <td style="font-family:sans-serif;">B.Tech in Mechanical Engineering (Smart Manufacturing & EV Tech)</td>
+              <td><span class="tag tag-applicant">UNDERGRADUATE</span></td>
+              <td style="font-family:sans-serif; color:#94a3b8;">University School of Engineering & Technology (USET)</td>
+              <td style="color:#4ade80;">₹1,10,000</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Seat Quota Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Table: <code>seatquota</code> (ACID Quota Partitioning & Concurrency Versioning)</span>
+          <span style="font-size:11px; color:#94a3b8;">Check: <code>allotted_seats &lt;= total_seats</code> | Optimistic Lock: <code>version</code></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>PROGRAM</th>
+              <th>CATEGORY</th>
+              <th>TOTAL SEATS</th>
+              <th>ALLOTTED</th>
+              <th>CONFIRMED</th>
+              <th>VERSION COUNTER</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td style="color:#38bdf8; font-weight:600;">BCA-AI</td>
+              <td><span class="tag tag-obc">ST</span></td>
+              <td style="font-weight:600;">3</td>
+              <td>0</td>
+              <td>0</td>
+              <td style="color:#f59e0b;">v0 (Optimistic)</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#38bdf8; font-weight:600;">MCA-PRO</td>
+              <td><span class="tag tag-obc">EWS</span></td>
+              <td style="font-weight:600;">2</td>
+              <td>0</td>
+              <td>0</td>
+              <td style="color:#f59e0b;">v0 (Optimistic)</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#38bdf8; font-weight:600;">BCA-AI</td>
+              <td><span class="tag tag-sc">SC</span></td>
+              <td style="font-weight:600;">13</td>
+              <td>0</td>
+              <td>0</td>
+              <td style="color:#f59e0b;">v0 (Optimistic)</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#38bdf8; font-weight:600;">MBA-INDUSTRY</td>
+              <td><span class="tag tag-obc">OBC_NCL</span></td>
+              <td style="font-weight:600;">13</td>
+              <td>0</td>
+              <td>0</td>
+              <td style="color:#f59e0b;">v0 (Optimistic)</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#38bdf8; font-weight:600;">BPHARM-RIP</td>
+              <td><span class="tag tag-obc">OBC_NCL</span></td>
+              <td style="font-weight:600;">13</td>
+              <td>0</td>
+              <td>0</td>
+              <td style="color:#f59e0b;">v0 (Optimistic)</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#38bdf8; font-weight:600;">BCA-AI</td>
+              <td><span class="tag tag-obc">EWS</span></td>
+              <td style="font-weight:600;">5</td>
+              <td>0</td>
+              <td>0</td>
+              <td style="color:#f59e0b;">v0 (Optimistic)</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Users & RBAC Table -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Table: <code>user</code> (Role-Based Access Control - 6 Academic Actors)</span>
+          <span style="font-size:11px; color:#94a3b8;">Security: <code>bcrypt (12 rounds)</code> | JWT Stateless Auth</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>EMAIL (MASKED DPDP)</th>
+              <th>ROLE</th>
+              <th>VERIFIED</th>
+              <th>REGISTERED</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr>
+              <td style="color:#f1f5f9;">applicant.rahul@example.com</td>
+              <td><span class="tag tag-applicant">APPLICANT</span></td>
+              <td style="color:#4ade80">✓ YES</td>
+              <td style="color:#94a3b8;">26/10/2026</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#f1f5f9;">new_applicant_1793009833823@example.com</td>
+              <td><span class="tag tag-applicant">APPLICANT</span></td>
+              <td style="color:#f87171">✗ PENDING</td>
+              <td style="color:#94a3b8;">26/10/2026</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#f1f5f9;">throttle_reg_3@example.com</td>
+              <td><span class="tag tag-applicant">APPLICANT</span></td>
+              <td style="color:#f87171">✗ PENDING</td>
+              <td style="color:#94a3b8;">26/10/2026</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#f1f5f9;">candidate.demo@example.com</td>
+              <td><span class="tag tag-applicant">APPLICANT</span></td>
+              <td style="color:#f87171">✗ PENDING</td>
+              <td style="color:#94a3b8;">26/10/2026</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#f1f5f9;">hod.cse@college.edu</td>
+              <td><span class="tag tag-hod">REVIEWER_HOD</span></td>
+              <td style="color:#4ade80">✓ YES</td>
+              <td style="color:#94a3b8;">27/10/2026</td>
+            </tr>
+            
+            <tr>
+              <td style="color:#f1f5f9;">throttle_reg_0@example.com</td>
+              <td><span class="tag tag-applicant">APPLICANT</span></td>
+              <td style="color:#f87171">✗ PENDING</td>
+              <td style="color:#94a3b8;">26/10/2026</td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

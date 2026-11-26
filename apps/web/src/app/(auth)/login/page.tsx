@@ -426,6 +426,14 @@ function LoginForm() {
                   <p className="font-bold text-slate-600">Click to fill test credentials:</p>
                   <button
                     type="button"
+                    onClick={() => fillCredentials('anshumanpatel.in@gmail.com', 'Lo481216@')}
+                    className="w-full text-left p-1.5 rounded hover:bg-white text-slate-900 font-semibold flex justify-between bg-sky-50/60 border border-sky-200/50"
+                  >
+                    <span>Anshuman Patel (Applicant)</span>
+                    <span className="text-blue-600 font-bold">Fill →</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => fillCredentials('applicant.rahul@example.com', 'Applicant@123')}
                     className="w-full text-left p-1.5 rounded hover:bg-white text-slate-700 flex justify-between"
                   >
