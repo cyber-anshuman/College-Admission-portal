@@ -3,6 +3,7 @@ import {
   OnModuleInit,
   OnModuleDestroy,
   Logger,
+  ServiceUnavailableException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
@@ -85,7 +86,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   }
 
   ensureReady(): void {
-    // Graceful in-memory fallback enabled
+    if (!this.client || this.client.status !== 'ready') {
+      throw new ServiceUnavailableException('Cache service unavailable');
+    }
   }
 
   async setWithExpiry(key: string, value: string, ttlSeconds: number): Promise<void> {
